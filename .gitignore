@@ -1,5 +1,8 @@
 # git
 *.orig
 
+# haxelib
+.haxelib/
+
 # project files
 bin/
