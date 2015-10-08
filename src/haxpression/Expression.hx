@@ -51,10 +51,10 @@ abstract Expression(ExpressionType) {
         type: "Identifier",
         name: name
       };
-      case Unary(operator, expression) : {
+      case Unary(operator, operand) : {
         type: "Unary",
         operator: operator,
-        operand: (expression : Expression).toObject()
+        operand: (operand : Expression).toObject()
       };
       case Binary(operator, left, right) : {
         type: "Binary",
@@ -108,8 +108,8 @@ abstract Expression(ExpressionType) {
       case Identifier(name) :
         // Push a variable if we haven't seen it already
         if (variables.indexOf(name) == -1) variables.push(name);
-      case Unary(operator, expression):
-        (expression : Expression).accumulateVariables(variables);
+      case Unary(operator, operand):
+        (operand : Expression).accumulateVariables(variables);
       case Binary(operator, left, right):
         (left : Expression).accumulateVariables(variables);
         (right : Expression).accumulateVariables(variables);
@@ -132,8 +132,8 @@ abstract Expression(ExpressionType) {
         Literal(value);
       case Identifier(name) :
         Identifier(name);
-      case Unary(operator, expression) :
-        Unary(operator, (expression : Expression).clone());
+      case Unary(operator, operand) :
+        Unary(operator, (operand : Expression).clone());
       case Binary(operator, left, right) :
         Binary(operator, (left : Expression).clone(), (right : Expression).clone());
       case Call(callee, arguments) :
@@ -167,6 +167,8 @@ abstract Expression(ExpressionType) {
         Array(items.substituteExpression(name, expression));
     };
   }
+
+  // TODO: pass function to get literal/expression
 
   public function substituteValue(name : String, value : Value) : Expression {
     return switch this {
@@ -214,6 +216,7 @@ abstract Expression(ExpressionType) {
       case Literal(value) :
         value;
       case Identifier(name):
+        // Resolve name on the fly with variables
         throw new Error('cannot evaluate with unset variable: $name');
       case Unary(operator, argument):
         var argumentValue = (argument : Expression).evaluate(variables);

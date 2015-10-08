@@ -99,6 +99,17 @@ abstract Value(ValueType) {
     };
   }
 
+  @:to
+  public function toString() : String {
+    return switch this {
+      case VFloat(v) : Std.string(v);
+      case VInt(v) : Std.string(v);
+      case VBool(v) : v ? TRUE_STRING : FALSE_STRING;
+      case VString(v) : v;
+      case VNone : NONE_STRING;
+    };
+  }
+
   public function toDynamic() : Dynamic {
     return switch this {
       case VFloat(v) : v;
@@ -121,16 +132,6 @@ abstract Value(ValueType) {
     return switch this {
       case VNone: true;
       case _: false;
-    };
-  }
-
-  public function toString() : String {
-    return switch this {
-      case VFloat(v) : Std.string(v);
-      case VInt(v) : Std.string(v);
-      case VBool(v) : v ? TRUE_STRING : FALSE_STRING;
-      case VString(v) : v;
-      case VNone : NONE_STRING;
     };
   }
 }

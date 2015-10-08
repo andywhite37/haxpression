@@ -1,1 +1,5 @@
+# git
+*.orig
+
+# project files
 bin/

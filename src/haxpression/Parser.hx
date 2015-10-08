@@ -25,15 +25,16 @@ class Parser {
 
   function internalParse() : Expression {
     while (index < length) {
-      var inputCharCode = charCodeAt(index);
-      if (inputCharCode == Chars.SEMICOLON_CODE || inputCharCode == Chars.COMMA_CODE) {
+      var charCode = charCodeAt(index);
+      if (charCode == Chars.SEMICOLON_CODE || charCode == Chars.COMMA_CODE) {
         index++;
       } else {
         var expression = gobbleExpression();
+
         if (expression != null) {
           expressions.push(expression);
         } else if (index < length) {
-          throw new Error('Unexpected "${charAt(index)}" at position ${index}');
+          throw new Error('unexpected "${charAt(index)}"', index);
         }
       }
     }
@@ -53,7 +54,7 @@ class Parser {
     return inputString.charCodeAt(index);
   }
 
-  function gobbleSpaces() {
+  function gobbleSpaces() : Void {
     var charCode = charCodeAt(index);
     while (Chars.isWhiteSpace(charCode)) {
       charCode = charCodeAt(++index);
@@ -62,23 +63,19 @@ class Parser {
 
   function gobbleExpression() : Expression {
     var expression = gobbleBinaryExpression();
-    var consequent : Expression;
-    var alternate : Expression;
-
     gobbleSpaces();
-
     if (charCodeAt(index) == Chars.QUESTION_MARK_CODE) {
       index++;
-      consequent = gobbleExpression();
+      var consequent = gobbleExpression();
       if (consequent == null) {
-        throw new Error('expected consequent expression for conditional', index);
+        throw new Error('expected a "consequent" expression for conditional', index);
       }
       gobbleSpaces();
       if (charCodeAt(index) == Chars.COLON_CODE) {
         index++;
-        alternate = gobbleExpression();
+        var alternate = gobbleExpression();
         if (alternate == null) {
-          throw new Error('expected alternate expression for conditional', index);
+          throw new Error('expected an "alternate" expression for conditional', index);
         }
         return Conditional(expression, consequent, alternate);
       }
@@ -103,18 +100,25 @@ class Parser {
   }
 
   function gobbleBinaryExpression() : Expression {
-    gobbleSpaces();
+    var char : String;
     var expression : Expression;
-    var left = gobbleToken();
+    var binaryOperator : String;
+    var precedence : Int;
+    var stack : Array<Dynamic>;
+    var binaryOperatorInfo : { operator : String, precedence : Int };
+    var left : Expression;
+    var right : Expression;
 
+    var left = gobbleToken();
     var binaryOperator = gobbleBinaryOperator();
+
     if (binaryOperator == null) {
       return left;
     }
 
-    var binaryOperatorInfo = {
+    binaryOperatorInfo = {
       operator: binaryOperator,
-      precedence: BinaryOperations.getOperatorPrecendence(binaryOperator)
+      precedence: BinaryOperations.getOperatorPrecedence(binaryOperator)
     };
 
     var right = gobbleToken();
@@ -122,10 +126,12 @@ class Parser {
       throw new Error('expected expression after $binaryOperator', index);
     }
 
+    // TODO: This code is untyped because of how the original jsepimplementation worked.
+    // Could be cleaned up.
     var stack : Array<Dynamic> = [left, binaryOperatorInfo, right];
 
     while ((binaryOperator = gobbleBinaryOperator()) != null) {
-      var precedence = BinaryOperations.getOperatorPrecendence(binaryOperator);
+      precedence = BinaryOperations.getOperatorPrecedence(binaryOperator);
 
       if (precedence == 0) {
         break;
@@ -136,7 +142,7 @@ class Parser {
         precedence: precedence
       };
 
-      while ((stack.length > 2) && (precedence <= stack[stack.length - 2].precendence)) {
+      while ((stack.length > 2) && (precedence <= stack[stack.length - 2].precedence)) {
         right = stack.pop();
         binaryOperator = stack.pop().operator;
         left = stack.pop();
@@ -146,7 +152,7 @@ class Parser {
 
       expression = gobbleToken();
       if (expression == null) {
-        throw new Error('expected expression after $binaryOperator', index);
+        throw new Error('expected expression after binary operator: "$binaryOperator"', index);
       }
       stack.push(binaryOperatorInfo);
       stack.push(expression);
@@ -158,6 +164,7 @@ class Parser {
       expression = Binary(stack[i - 1].operator, stack[i - 2], expression);
       i -= 2;
     }
+
     return expression;
   }
 
@@ -219,16 +226,16 @@ class Parser {
       }
 
       if (!Chars.isDecimalDigit(charCodeAt(index - 1))) {
-        throw new Error('expected exponent (${numberString}${charAt(index)})', index);
+        throw new Error('expected exponent in numeric literal: "${numberString}${charAt(index)}"', index);
       }
     }
 
     var charCode = charCodeAt(index);
 
     if (Chars.isIdentifierStart(charCode)) {
-      throw new Error('variable names cannot start with a number (${numberString}${charAt(index)})', index);
+      throw new Error('variable names cannot start with a number: "${numberString}${charAt(index)}"', index);
     } else if (charCode == Chars.PERIOD_CODE) {
-      throw new Error('unexpected period', index);
+      throw new Error('unexpected period in numeric literal: "${numberString}${charAt(index)}"', index);
     }
 
     return Literal(Std.parseFloat(numberString));
@@ -287,6 +294,8 @@ class Parser {
     }
 
     identifier = inputString.substring(start, index);
+
+    // TODO: could add other constants like PI, E, etc.
 
     if (identifier == "true") {
       return Literal(true);

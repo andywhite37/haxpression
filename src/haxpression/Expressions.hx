@@ -1,5 +1,8 @@
 package haxpression;
 
+/**
+  Extension methods for Array<Expression>
+  **/
 class Expressions {
   public static function toExpressionTypes(expressions : Array<Expression>) : Array<ExpressionType> {
     return expressions.map(function(expression) {

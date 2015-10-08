@@ -18,9 +18,9 @@ class CallOperations {
     add("floor", 1, function(arguments) return Math.floor(arguments[0].toFloat()));
     add("fround", 1, function(arguments) return Math.fround(arguments[0].toFloat()));
     add("log", 1, function(arguments) return Math.log(arguments[0].toFloat()));
-    add("max", 1, function(arguments) return Math.max(arguments[0].toFloat(), arguments[1].toFloat()));
-    add("min", 1, function(arguments) return Math.min(arguments[0].toFloat(), arguments[1].toFloat()));
-    add("pow", 1, function(arguments) return Math.pow(arguments[0].toFloat(), arguments[1].toFloat()));
+    add("max", 2, function(arguments) return Math.max(arguments[0].toFloat(), arguments[1].toFloat()));
+    add("min", 2, function(arguments) return Math.min(arguments[0].toFloat(), arguments[1].toFloat()));
+    add("pow", 2, function(arguments) return Math.pow(arguments[0].toFloat(), arguments[1].toFloat()));
     add("random", 0, function(arguments) return Math.random());
     add("round", 1, function(arguments) return Math.round(arguments[0].toFloat()));
     add("sin", 1, function(arguments) return Math.sin(arguments[0].toFloat()));

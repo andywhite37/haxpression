@@ -9,9 +9,9 @@ class UnaryOperations {
   public static function __init__() {
     map = new Map();
     add("-", 1, function(value) return value.toFloat() * -1);
-    add("+", 1, function(value) return value.toFloat());
-    add("!", 1, function(value) return !value.toBool());
-    add("~", 1, function(value) return ~value.toInt());
+    add("+", 1, function(value) return value.toFloat() * 1);
+    add("!", 1, function(value) return !(value.toBool()));
+    add("~", 1, function(value) return ~(value.toInt()));
   }
 
   public static function evaluate(operator : String, value : Value) : Value {
@@ -37,7 +37,7 @@ class UnaryOperations {
     map = new Map();
   }
 
-  public static function getOperatorPrecendence(operator : String) : Int {
+  public static function getOperatorPrecedence(operator : String) : Int {
     return map.get(operator).precedence;
   }
 
