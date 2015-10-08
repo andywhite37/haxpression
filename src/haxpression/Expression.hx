@@ -216,7 +216,7 @@ abstract Expression(ExpressionType) {
       case Literal(value) :
         value;
       case Identifier(name):
-        // Resolve name on the fly with variables
+        // TODO: Resolve name on the fly with variables
         throw new Error('cannot evaluate with unset variable: $name');
       case Unary(operator, argument):
         var argumentValue = (argument : Expression).evaluate(variables);
