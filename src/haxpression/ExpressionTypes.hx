@@ -7,21 +7,15 @@ class ExpressionTypes {
     });
   }
 
-  public static function evaluate(expressionTypes : Array<ExpressionType>, ?variables : Array<{ name : String, value: Value }>) : Array<Value> {
+  public static function evaluate(expressionTypes : Array<ExpressionType>, ?variables : Map<String, Value>) : Array<Value> {
     return expressionTypes.map(function(expressionType) {
       return (expressionType : Expression).evaluate(variables);
     });
   }
 
-  public static function substituteValue(expressionTypes : Array<ExpressionType>, name: String, value: Value) : Array<ExpressionType> {
+  public static function substitute(expressionTypes : Array<ExpressionType>, variables : Map<String, ExpressionOrValue>) : Array<ExpressionType> {
     return expressionTypes.map(function(expressionType) {
-      return (expressionType : Expression).substituteValue(name, value).toExpressionType();
-    });
-  }
-
-  public static function substituteExpression(expressionTypes : Array<ExpressionType>, name: String, expression: Expression) : Array<ExpressionType> {
-    return expressionTypes.map(function(expressionType) {
-      return (expressionType : Expression).substituteExpression(name, expression).toExpressionType();
+      return (expressionType : Expression).substitute(variables).toExpressionType();
     });
   }
 

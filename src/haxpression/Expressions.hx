@@ -1,5 +1,7 @@
 package haxpression;
 
+using haxpression.Arrays;
+
 /**
   Extension methods for Array<Expression>
   **/
@@ -16,9 +18,15 @@ class Expressions {
     });
   }
 
-  public static function evaluate(expressions : Array<Expression>, ?variables : Array<{ name: String, value: Value }>) : Array<Value> {
+  public static function evaluate(expressions : Array<Expression>, ?variables : Map<String, Value>) : Array<Value> {
     return expressions.map(function(expression) {
       return expression.evaluate(variables);
+    });
+  }
+
+  public static function hasVariablesStartingWith(expressions : Array<Expression>, text : String) {
+    return expressions.any(function(expression) {
+      return expression.hasVariablesStartingWith(text);
     });
   }
 }
