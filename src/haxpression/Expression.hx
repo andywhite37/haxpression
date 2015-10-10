@@ -8,23 +8,23 @@ using haxpression.Arrays;
 using haxpression.ExpressionTypes;
 using haxpression.Expressions;
 
-abstract Expression<T>(ExpressionType<T>) {
-  public function new(expressionType : ExpressionType<T>) {
+abstract Expression(ExpressionType) {
+  public function new(expressionType : ExpressionType) {
     this = expressionType;
   }
 
   @:from
-  public static function fromExpressionType(expressionType : ExpressionType<T>) {
+  public static function fromExpressionType(expressionType : ExpressionType) {
     return new Expression(expressionType);
   }
 
   @:to
-  public function toExpressionType() : ExpressionType<T> {
+  public function toExpressionType() : ExpressionType {
     return this;
   }
 
   @:from
-  public static function fromString(input : String) : Expression<T> {
+  public static function fromString(input : String) : Expression {
     return Parser.parse(input);
   }
 
@@ -141,7 +141,7 @@ abstract Expression<T>(ExpressionType<T>) {
     };
   }
 
-  public function substitute(variables : Map<String, ExpressionOrValue<T>>) : Expression {
+  public function substitute(variables : Map<String, ExpressionOrValue>) : Expression {
     return switch this {
       case Literal(value):
         Literal(value);

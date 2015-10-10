@@ -4,13 +4,13 @@ import haxe.ds.Either;
 import haxpression.ExpressionType;
 import haxpression.ValueType;
 
-abstract ExpressionOrValue<T>(Either<Expression<T>, T>) {
-  public function new(either : Either<Expression, T>) {
+abstract ExpressionOrValue(Either<Expression, Value>) {
+  public function new(either : Either<Expression, Value>) {
     this = either;
   }
 
   @:from
-  public static function fromEither(either : Either<Expression<T>, T>) {
+  public static function fromEither(either : Either<Expression, Value>) {
     return new ExpressionOrValue(either);
   }
 
