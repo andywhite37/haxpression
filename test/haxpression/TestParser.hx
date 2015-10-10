@@ -102,13 +102,11 @@ class TestParser {
       "MAP_VALUE_2" => "4 * SOURCE_1 + 10 * SOURCE_3",
       "MAP_VALUE_3" => "2 * SOURCE_1 + 0.3 * MAP_VALUE_2"
     ];
-
-    var hasMapVariables = true;
-    while (hasMapVariables) {
-    }
-    for (key in mappings.keys()) {
-    }
-
+    //var hasMapVariables = true;
+    //while (hasMapVariables) {
+    //}
+    //for (key in mappings.keys()) {
+    //}
   }
 
   public function testToString(){
