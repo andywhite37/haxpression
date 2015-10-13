@@ -3,6 +3,14 @@ package haxpression.utils;
 using Lambda;
 
 class Arrays {
+  public static function contains<T>(items : Array<T>, item : T) : Bool {
+    return items.indexOf(item) != -1;
+  }
+
+  public static function each<T>(items : Array<T>, callback : T -> Void) : Void {
+    return items.iter(callback);
+  }
+
   public static function any<T>(items : Array<T>, check : T -> Bool) : Bool {
     return items.find(check) != null;
   }

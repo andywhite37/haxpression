@@ -5,6 +5,7 @@ import haxpression.ValueType;
 using Lambda;
 using StringTools;
 using haxpression.utils.Arrays;
+using haxpression.utils.Iterators;
 using haxpression.utils.Strings;
 using haxpression.ExpressionTypes;
 using haxpression.Expressions;
@@ -105,6 +106,12 @@ abstract Expression(ExpressionType) {
   public function hasVariablesEndingWith(text : String) {
     return getVariables().any(function(variable) {
       return variable.endsWith(text);
+    });
+  }
+
+  public function hasVariablesWithin(variables : Array<String>) : Bool {
+    return getVariables().all(function(variable) {
+      return variables.contains(variable);
     });
   }
 

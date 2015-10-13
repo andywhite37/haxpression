@@ -96,19 +96,6 @@ class TestParser {
     Assert.same(Math.PI * Math.pow(10, 2), result1);
   }
 
-  public function testWithExpressionSubstitutions() {
-    var mappings : Map<String, Expression> = [
-      "MAP_VALUE_1" => "2 * SOURCE_1 + 0.5 * SOURCE_2",
-      "MAP_VALUE_2" => "4 * SOURCE_1 + 10 * SOURCE_3",
-      "MAP_VALUE_3" => "2 * SOURCE_1 + 0.3 * MAP_VALUE_2"
-    ];
-    //var hasMapVariables = true;
-    //while (hasMapVariables) {
-    //}
-    //for (key in mappings.keys()) {
-    //}
-  }
-
   public function testToString(){
     '1 + 2'.toStringSameAs('(1 + 2)');
     '1 + 2 + 3'.toStringSameAs('((1 + 2) + 3)');

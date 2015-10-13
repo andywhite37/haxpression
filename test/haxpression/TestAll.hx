@@ -11,6 +11,7 @@ class TestAll {
     runner.addCase(new TestChars());
     runner.addCase(new TestStrings());
     runner.addCase(new TestExpression());
+    runner.addCase(new TestExpressionGroup());
     runner.addCase(new TestParser());
     runner.addCase(new TestValue());
   }
