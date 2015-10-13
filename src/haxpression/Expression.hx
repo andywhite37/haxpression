@@ -4,7 +4,8 @@ import haxpression.ExpressionType;
 import haxpression.ValueType;
 using Lambda;
 using StringTools;
-using haxpression.Arrays;
+using haxpression.utils.Arrays;
+using haxpression.utils.Strings;
 using haxpression.ExpressionTypes;
 using haxpression.Expressions;
 
@@ -97,7 +98,7 @@ abstract Expression(ExpressionType) {
 
   public function hasVariablesContaining(text : String) {
     return getVariables().any(function(variable) {
-      return variable.indexOf(text) != -1;
+      return variable.contains(text);
     });
   }
 
@@ -162,20 +163,88 @@ abstract Expression(ExpressionType) {
     };
   }
 
+  public function simplify() : Expression {
+    return switch this {
+      case Literal(value):
+        Literal(value);
+      case Identifier(name):
+        Identifier(name);
+      case Unary(operator, operand):
+        if ((operand : Expression).canEvaluate()) {
+          Literal(UnaryOperations.evaluate(operator, (operand : Expression).evaluate()));
+        } else {
+          Unary(operator, (operand : Expression).simplify().toExpressionType());
+        }
+      case Binary(operator, left, right):
+        if ((left : Expression).canEvaluate() && (right : Expression).canEvaluate()) {
+          Literal(BinaryOperations.evaluate(operator, (left : Expression).evaluate(), (right : Expression).evaluate()));
+        } else {
+          Binary(operator, (left : Expression).simplify(), (right : Expression).simplify());
+        }
+      case Conditional(test, consequent, alternate):
+        if ((test : Expression).canEvaluate()) {
+          (test : Expression).evaluate() ?
+            (consequent : Expression).simplify() :
+            (alternate : Expression).simplify();
+        } else {
+          Conditional((test : Expression).simplify(), (consequent : Expression).simplify(), (alternate : Expression).simplify());
+        }
+      case Call(callee, arguments):
+        if (arguments.canEvaluateAll()) {
+          return Literal(CallOperations.evaluate(callee, arguments.evaluate()));
+        } else {
+          Call(callee, arguments.simplify());
+        }
+      case Array(items):
+        Array(items.simplify());
+      case Compound(items):
+        Compound(items.simplify());
+    };
+  }
+
+  public function canEvaluate() : Bool {
+    return switch this {
+      case Literal(value):
+        true;
+      case Identifier(name):
+        false;
+      case Unary(operator, operand):
+        (operand : Expression).canEvaluate();
+      case Binary(operator, left, right):
+        (left : Expression).canEvaluate() && (right : Expression).canEvaluate();
+      case Call(callee, arguments):
+        arguments.canEvaluateAll();
+      case Conditional(test, consequent, alternate):
+        if (!(test : Expression).canEvaluate()) {
+          false;
+        } else {
+          (test : Expression).evaluate() ?
+            (consequent : Expression).canEvaluate() :
+            (alternate : Expression).canEvaluate();
+        }
+      case Array(items):
+        items.canEvaluateAll();
+      case Compound(items):
+        items.canEvaluateAll();
+    };
+  }
+
   public function evaluate(?variables : Map<String, Value>) : Value {
-    if (variables == null) variables = new Map();
+    if (variables == null) {
+      variables = new Map();
+    }
 
     return switch this {
       case Literal(value) :
         value;
       case Identifier(name):
         if (!variables.exists(name)) {
-          throw new Error('cannot evaluate with unset variable: $name');
+          throw new Error('cannot evaluate expression with unset variable: $name');
         }
         variables.get(name);
-      case Unary(operator, argument):
-        var argumentValue = (argument : Expression).evaluate(variables);
-        UnaryOperations.evaluate(operator, argumentValue);
+      case Unary(operator, operand):
+        var operandValue = (operand : Expression).evaluate(variables);
+        UnaryOperations.evaluate(operator, operandValue);
       case Binary(operator, left, right):
         var leftValue = (left : Expression).evaluate(variables);
         var rightValue = (right : Expression).evaluate(variables);

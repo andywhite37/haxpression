@@ -1,6 +1,6 @@
 package haxpression;
 
-using haxpression.Arrays;
+using haxpression.utils.Arrays;
 
 /**
   Extension methods for Array<Expression>

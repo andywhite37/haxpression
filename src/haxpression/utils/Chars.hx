@@ -1,4 +1,4 @@
-package haxpression;
+package haxpression.utils;
 
 using StringTools;
 
@@ -16,6 +16,8 @@ class Chars {
   public static var COLON(default, never) = ":";
 
   public static var TAB_CODE(default, never) = 9;
+  public static var LF_CODE(default, never) = 10;
+  public static var CR_CODE(default, never) = 13;
   public static var SPACE_CODE(default, never) = 32;
   public static var DOUBLE_QUOTE_CODE(default, never) = 34;
   public static var DOLLAR_CODE(default, never) = 36;
@@ -56,6 +58,9 @@ class Chars {
   }
 
   public static function isWhiteSpace(charCode : Int) : Bool {
-    return charCode == SPACE_CODE || charCode == TAB_CODE;
+    return charCode == TAB_CODE ||
+      charCode == LF_CODE ||
+      charCode == CR_CODE ||
+      charCode == SPACE_CODE;
   }
 }

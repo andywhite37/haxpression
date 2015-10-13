@@ -1,9 +1,23 @@
 package haxpression;
 
+using haxpression.utils.Arrays;
+
 class ExpressionTypes {
   public static function clone(expressionTypes : Array<ExpressionType>) : Array<ExpressionType> {
     return expressionTypes.map(function(expressionType) {
       return (expressionType : Expression).clone().toExpressionType();
+    });
+  }
+
+  public static function canEvaluateAll(expressionTypes : Array<ExpressionType>) : Bool {
+    return expressionTypes.all(function(expressionType) {
+      return (expressionType : Expression).canEvaluate();
+    });
+  }
+
+  public static function simplify(expressionTypes : Array<ExpressionType>) : Array<ExpressionType> {
+    return expressionTypes.map(function(expressionType) {
+      return (expressionType : Expression).simplify().toExpressionType();
     });
   }
 

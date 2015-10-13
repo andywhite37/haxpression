@@ -42,7 +42,7 @@ class CallOperations {
 
   public static function evaluate(callee : String, arguments : Array<Value>) : Value {
     if (!has(callee)) {
-      throw new Error('no function implementation given for function name: $callee');
+      throw new Error('no function implementation found for function name: $callee');
     }
     return map.get(callee).operation(arguments);
   }
@@ -50,7 +50,7 @@ class CallOperations {
   static function wrapOperation(callee : String, arity : Int, operation : Array<Value> -> Value) : Array<Value> -> Value {
     return function(arguments) {
       if (arguments.length != arity) {
-        throw new Error('function $callee expects exactly $arity arguments');
+        throw new Error('function $callee expects exactly $arity argument(s)');
       }
       return operation(arguments);
     };

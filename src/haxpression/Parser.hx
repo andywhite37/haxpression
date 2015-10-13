@@ -2,6 +2,7 @@ package haxpression;
 
 import haxpression.ExpressionType;
 import haxpression.ValueType;
+import haxpression.utils.Chars;
 using Lambda;
 using StringTools;
 
