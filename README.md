@@ -93,3 +93,27 @@ trace(result);
 //   SOURCE_2 => 3.14,
 // }
 ```
+
+### Customizable binary/unary/function operations
+
+haxpression provides default binary, unary, and function operations
+out-of-the-box, including most of the common math operators and
+`Math` functions.
+
+Binary, unary, and function call operations can be customized using the
+`BinaryOperations`, `UnaryOperations`, and `CallOperations` classes.
+
+```
+// Use built-in + binary operator and abs function
+var result : Int = ('1 + abs(x)' : Expression).evaluate([ "x" => -5 ]);
+trace(result);
+// prints: 6
+
+// Create new binary operator and function
+CallOperations.add("myfunc", 2, function(arguments) return arguments[0].toFloat() + arguments[1].toFloat()); // 2 is the function arity
+BinaryOperations.add("&&&", 10, function(left, right) return left.toFloat() / right.toFloat()); // 10 is the operator precedence - see BinaryOperations
+
+var resultFloat : Float = ('myfunc(x, 10) &&& myfunc(y, 20)' : Expression).evaluate([ "x" => 2, "y" => 3 ]);
+trace(resultFloat);
+// prints: 0.5217391304347826 = (2 + 10) / (3 + 20)
+```

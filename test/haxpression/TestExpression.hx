@@ -21,8 +21,21 @@ class TestExpression {
     ]);
     trace(result);
 
-    Assert.pass();
     trace("--------------");
+
+    var result : Int = ('1 + abs(x)' : Expression).evaluate([ "x" => -5 ]);
+    trace(result);
+
+    trace("--------------");
+
+    CallOperations.add("myfunc", 2, function(arguments) return arguments[0].toFloat() + arguments[1].toFloat());
+    BinaryOperations.add("&&&", 10, function(left, right) return left.toFloat() / right.toFloat());
+
+    var resultFloat : Float = ('myfunc(x, 10) &&& myfunc(y, 20)' : Expression).evaluate([ "x" => 2, "y" => 3 ]);
+    trace(resultFloat);
+
+    trace("--------------");
+    Assert.pass();
   }
   */
 
