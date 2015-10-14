@@ -1,0 +1,14 @@
+{
+  "name": "haxpression",
+  "url": "https://github.com/andywhite37/haxpression",
+  "license": "MIT",
+  "tags": ["parser", "expression", "math"],
+  "description": "Basic math expression parser and evaluator",
+  "version": "0.0.1",
+  "classPath": "src/",
+  "releasenote": "Initial release",
+  "contributors": ["andywhite37"],
+  "dependencies": {
+    "utest": ""
+  }
+}

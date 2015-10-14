@@ -1,0 +1,15 @@
+#! /usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+if [[ -f haxpression.zip ]]; then
+  rm haxpression.zip
+fi
+
+haxe build.hxml
+git add -A
+git commit -m 'Submit to haxelib'
+
+zip -r haxpression.zip LICENSE README.md build.hxml haxelib.json hmm.json src test
+
+#haxelib submit haxpression.zip
