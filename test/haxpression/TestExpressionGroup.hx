@@ -32,6 +32,8 @@ class TestExpressionGroup {
       'MAP_2' => expectedMap2,
       'MAP_3' => expectedMap3,
     ], result);
+
+    //trace(result);
   }
 
   public function testValidate() {

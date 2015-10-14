@@ -8,6 +8,24 @@ class TestExpression {
   public function new() {
   }
 
+  /*
+  public function testForReadme() {
+    trace("--------------");
+    var expr = Parser.parse('1 + x / y');
+    trace(expr);
+    trace(expr.toObject());
+
+    var result : Float = expr.evaluate([
+      "x" => 5,
+      "y" => 10
+    ]);
+    trace(result);
+
+    Assert.pass();
+    trace("--------------");
+  }
+  */
+
   public function testToString() {
     (Binary("+", Literal(1), Literal(2)) : Expression).toStringSameAs("(1 + 2)");
     (Binary("+", Binary("+", Literal(1), Literal(2)), Literal(3)) : Expression).toStringSameAs("((1 + 2) + 3)");
