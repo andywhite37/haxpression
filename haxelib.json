@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "classPath": "src/",
-  "releasenote": "Initial release",
+  "releasenote": "Update documentation",
   "contributors": ["andywhite37"],
   "dependencies": {
     "utest": ""

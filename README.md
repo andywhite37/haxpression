@@ -8,6 +8,11 @@ This library parses basic math expressions into an expression-tree, and
 provides methods to replace variables with values or other expressions,
 simplify expressios, and evaluate expressions.
 
+## Credits
+
+The expression parser logic was ported from this JavaScript library:
+[jsep](http://jsep.from.so/).
+
 ## Examples
 
 ### Basic expression parsing and evaluation
