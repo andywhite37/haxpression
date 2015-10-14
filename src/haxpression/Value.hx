@@ -1,7 +1,7 @@
 package haxpression;
 
 import haxpression.ValueType;
-using Lambda;
+using haxpression.utils.Arrays;
 
 abstract Value(ValueType) {
   public static var NONE_STRING(default, never) = "NA";

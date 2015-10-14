@@ -17,6 +17,15 @@ class Arrays {
     return items.iter(callback);
   }
 
+  public static function find<T>(items : Array<T>, callback : T -> Bool) : T {
+    for (item in items) {
+      if (callback(item)) {
+        return item;
+      }
+    }
+    return null;
+  }
+
   public static function any<T>(items : Array<T>, check : T -> Bool) : Bool {
     return items.find(check) != null;
   }

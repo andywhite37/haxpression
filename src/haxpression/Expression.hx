@@ -2,7 +2,6 @@ package haxpression;
 
 import haxpression.ExpressionType;
 import haxpression.ValueType;
-using Lambda;
 using StringTools;
 using haxpression.utils.Arrays;
 using haxpression.utils.Iterators;
@@ -237,9 +236,7 @@ abstract Expression(ExpressionType) {
   }
 
   public function evaluate(?variables : Map<String, Value>) : Value {
-    if (variables == null) {
-      variables = new Map();
-    }
+    if (variables == null) variables = new Map();
 
     return switch this {
       case Literal(value) :
@@ -266,14 +263,18 @@ abstract Expression(ExpressionType) {
         // We'll just assume the value of an array expression is the last value
         // or none if there are no items in the array
         if (items.length == 0) VNone;
-        var values = items.evaluate(variables);
-        values[values.length - 1];
+        else {
+          var values = items.evaluate(variables);
+          values[values.length - 1];
+        }
       case Compound(items):
         // We'll just assume the value of an compound expression is the last value
         // or none if there are no items in the array
         if (items.length == 0) VNone;
-        var values = items.evaluate(variables);
-        values[values.length - 1];
+        else {
+          var values = items.evaluate(variables);
+          values[values.length - 1];
+        }
     };
   }
 
@@ -297,15 +298,15 @@ abstract Expression(ExpressionType) {
         (left : Expression).accumulateVariables(variables);
         (right : Expression).accumulateVariables(variables);
       case Call(callee, arguments):
-        arguments.iter(function(expression) (expression : Expression).accumulateVariables(variables));
+        arguments.each(function(expression) (expression : Expression).accumulateVariables(variables));
       case Conditional(test, consequent, alternate):
         (test : Expression).accumulateVariables(variables);
         (consequent : Expression).accumulateVariables(variables);
         (alternate : Expression).accumulateVariables(variables);
       case Array(items):
-        items.iter(function(expression) (expression : Expression).accumulateVariables(variables));
+        items.each(function(expression) (expression : Expression).accumulateVariables(variables));
       case Compound(items):
-        items.iter(function(expression) (expression : Expression).accumulateVariables(variables));
+        items.each(function(expression) (expression : Expression).accumulateVariables(variables));
     };
   }
 

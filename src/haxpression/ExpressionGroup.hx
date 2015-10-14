@@ -24,6 +24,12 @@ class ExpressionGroup {
     return result;
   }
 
+  public function remove(variable : String) : ExpressionGroup {
+    var result = clone();
+    result.map.remove(variable);
+    return result;
+  }
+
   public function add(variables : Map<String, Value>) : ExpressionGroup {
     var result = clone();
     for (variable in variables.keys()) {
@@ -48,19 +54,13 @@ class ExpressionGroup {
   }
 
   public function evaluate(?variables : Map<String, Value>) : Map<String, Value> {
-    // 1. substitute primitive value variables in all expressions in this group
     var result = variables != null ? add(variables) : clone();
 
     var canEvaluateAll = false;
     while (!canEvaluateAll) {
-      //trace("-------------------------------------");
-      //trace(result);
-
       canEvaluateAll = result.allVariables(function(variable, expressionOrValue) {
         return expressionOrValue.toExpression().canEvaluate();
       });
-
-      //trace('canEvaluateAll: $canEvaluateAll');
 
       if (canEvaluateAll) {
         break;
@@ -68,38 +68,24 @@ class ExpressionGroup {
 
       var topLevelVariables = result.getVariables();
 
-      //trace('topLevelVariables: $topLevelVariables');
-
       for (targetVariable in topLevelVariables) {
         var targetExpression = result.getExpression(targetVariable);
-        //trace('targetVariable: $targetVariable => $targetExpression');
 
-        // If we can evaluate this variable, we are done
         if (targetExpression.canEvaluate()) {
-          //trace('$targetVariable can be evaluated!');
           continue;
         }
 
-        // Loop over the other top-level variables, and see if we can replace any in the target
         var targetExpressionVariables = targetExpression.getVariables();
-        //trace('$targetVariable variables: $targetExpressionVariables');
 
         if (!topLevelVariables.containsAll(targetExpressionVariables)) {
           throw new Error('cannot evaluate expression group with undefined variables');
         }
 
         for (targetExpressionVariable in targetExpressionVariables) {
-          //trace('before substitute $targetVariable -> $targetExpressionVariable');
-          //trace(result);
-
           targetExpression = targetExpression.substitute([
             targetExpressionVariable => result.getExpression(targetExpressionVariable)
           ]);
-
           result = result.set(targetVariable, targetExpression);
-
-          //trace('after substitute $targetVariable -> $targetExpressionVariable');
-          //trace(result);
         }
       }
     }
@@ -125,6 +111,7 @@ class ExpressionGroup {
       }
       return acc;
     }, []);
+
     variables.sort(function(a, b) {
       a = a.toLowerCase();
       b = b.toLowerCase();
@@ -132,6 +119,7 @@ class ExpressionGroup {
         else if (a < b) -1;
         else 0;
     });
+
     return variables;
   }
 
