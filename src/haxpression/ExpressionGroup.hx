@@ -1,5 +1,6 @@
 package haxpression;
 
+import haxe.Json;
 using haxpression.utils.Arrays;
 using haxpression.utils.Iterators;
 using haxpression.utils.Maps;
@@ -12,50 +13,110 @@ class ExpressionGroup {
   }
 
   public function clone() : ExpressionGroup {
-    return _map(function(variable, expressionOrValue) {
+    return mapVariables(function(variable, expressionOrValue) {
       return expressionOrValue.toExpression().clone();
     });
   }
 
+  public function set(variable : String, expressionOrValue : ExpressionOrValue) : ExpressionGroup {
+    var result = clone();
+    result.map.set(variable, expressionOrValue);
+    return result;
+  }
+
+  public function add(variables : Map<String, Value>) : ExpressionGroup {
+    var result = clone();
+    for (variable in variables.keys()) {
+      if (result.map.exists(variable)) {
+        throw new Error('variable $variable is already defined in expression group');
+      }
+      result.map.set(variable, variables[variable]);
+    }
+    return result;
+  }
+
   public function substitute(variables : Map<String, ExpressionOrValue>) : ExpressionGroup {
-    return _map(function(variable, expressionOrValue) {
+    return mapVariables(function(variable, expressionOrValue) {
       return expressionOrValue.toExpression().substitute(variables);
     });
   }
 
   public function simplify() : ExpressionGroup {
-    return _map(function(variable, expressionOrValue) {
+    return mapVariables(function(variable, expressionOrValue) {
       return expressionOrValue.toExpression().simplify();
     });
   }
 
-  public function evaluate(?variables : Map<String, ExpressionOrValue>) : Map<String, Value> {
+  public function evaluate(?variables : Map<String, Value>) : Map<String, Value> {
     // 1. substitute primitive value variables in all expressions in this group
-    var newExpressionGroup = variables != null ? substitute(variables) : clone();
+    var result = variables != null ? add(variables) : clone();
 
     var canEvaluateAll = false;
     while (!canEvaluateAll) {
-      canEvaluateAll = newExpressionGroup._all(function(variable, expressionOrValue) {
+      //trace("-------------------------------------");
+      //trace(result);
+
+      canEvaluateAll = result.allVariables(function(variable, expressionOrValue) {
         return expressionOrValue.toExpression().canEvaluate();
       });
+
+      //trace('canEvaluateAll: $canEvaluateAll');
 
       if (canEvaluateAll) {
         break;
       }
 
-      for (key in map.keys()) {
+      var topLevelVariables = result.getVariables();
+
+      //trace('topLevelVariables: $topLevelVariables');
+
+      for (targetVariable in topLevelVariables) {
+        var targetExpression = result.getExpression(targetVariable);
+        //trace('targetVariable: $targetVariable => $targetExpression');
+
+        // If we can evaluate this variable, we are done
+        if (targetExpression.canEvaluate()) {
+          //trace('$targetVariable can be evaluated!');
+          continue;
+        }
+
+        // Loop over the other top-level variables, and see if we can replace any in the target
+        var targetExpressionVariables = targetExpression.getVariables();
+        //trace('$targetVariable variables: $targetExpressionVariables');
+
+        if (!topLevelVariables.containsAll(targetExpressionVariables)) {
+          throw new Error('cannot evaluate expression group with undefined variables');
+        }
+
+        for (targetExpressionVariable in targetExpressionVariables) {
+          //trace('before substitute $targetVariable -> $targetExpressionVariable');
+          //trace(result);
+
+          targetExpression = targetExpression.substitute([
+            targetExpressionVariable => result.getExpression(targetExpressionVariable)
+          ]);
+
+          result = result.set(targetVariable, targetExpression);
+
+          //trace('after substitute $targetVariable -> $targetExpressionVariable');
+          //trace(result);
+        }
       }
     }
 
-    return null;
+    return result.reduceVariables(function(variable, expressionOrValue, acc : Map<String, Value>) {
+      acc.set(variable, expressionOrValue.toExpression().evaluate(variables).toDynamic());
+      return acc;
+    }, new Map());
   }
 
   public function getVariables(?includeExpressions : Bool = false) : Array<String> {
-    var variables = _reduce(function(variable, expressionOrValue, acc : Array<String>) : Array<String> {
+    var variables = map.keys().toArray().reduce(function(variable, acc : Array<String>) : Array<String> {
       if (!acc.contains(variable)) {
         acc.push(variable);
       }
       if (includeExpressions) {
+        var expressionOrValue = map[variable];
         for (expressionVariable in expressionOrValue.toExpression().getVariables()) {
           if (!acc.contains(expressionVariable)) {
             acc.push(expressionVariable);
@@ -89,19 +150,30 @@ class ExpressionGroup {
     return getExpressionOrValue(variable).toValue();
   }
 
-  function _all(callback : String -> ExpressionOrValue -> Bool) : Bool {
+  public function toObject() : {} {
+    return cast reduceVariables(function(variable, expressionOrValue, acc : Dynamic) : Dynamic {
+      Reflect.setField(acc, variable, expressionOrValue.toExpression().toString());
+      return acc;
+    }, {});
+  }
+
+  public function toString() {
+    return Json.stringify(toObject(), null, '  ');
+  }
+
+  function allVariables(callback : String -> ExpressionOrValue -> Bool) : Bool {
     return getVariables().all(function(variable) {
       return callback(variable, map[variable]);
     });
   }
 
-  function _any(callback : String -> ExpressionOrValue -> Bool) : Bool {
+  function anyVaraibles(callback : String -> ExpressionOrValue -> Bool) : Bool {
     return getVariables().all(function(variable) {
       return callback(variable, map[variable]);
     });
   }
 
-  function _map(callback : String -> ExpressionOrValue -> ExpressionOrValue) : ExpressionGroup {
+  function mapVariables(callback : String -> ExpressionOrValue -> ExpressionOrValue) : ExpressionGroup {
     var newMap : Map<String, ExpressionOrValue> = new Map();
     for (variable in getVariables()) {
       newMap.set(variable, callback(variable, map[variable]));
@@ -109,7 +181,7 @@ class ExpressionGroup {
     return new ExpressionGroup(newMap);
   }
 
-  function _reduce<T>(callback : String -> ExpressionOrValue -> T -> T, acc : T) : T {
+  function reduceVariables<T>(callback : String -> ExpressionOrValue -> T -> T, acc : T) : T {
     for (variable in getVariables()) {
       acc = callback(variable, map[variable], acc);
     }

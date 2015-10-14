@@ -7,6 +7,12 @@ class Arrays {
     return items.indexOf(item) != -1;
   }
 
+  public static function containsAll<T>(items : Array<T>, others : Array<T>) : Bool {
+    return all(others, function(other) {
+      return contains(items, other);
+    });
+  }
+
   public static function each<T>(items : Array<T>, callback : T -> Void) : Void {
     return items.iter(callback);
   }
