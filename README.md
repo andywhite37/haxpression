@@ -24,26 +24,26 @@ trace(expr);
 
 trace(expr.toObject());
 // prints:
-{
-  "type": "Binary",
-  "operator": "+",
-  "left: {
-    type: "Literal",
-    value: 1
-  },
-  "right": {
-    "type": "Binary",
-    "operator": "/",
-    "left": {
-      "type": "Identifier",
-      "name": "x"
-    },
-    "right": {
-      "type": "Identifier",
-      "name": "y"
-    }
-  }
-}
+// {
+//   "type": "Binary",
+//   "operator": "+",
+//   "left: {
+//     type: "Literal",
+//     value: 1
+//   },
+//   "right": {
+//     "type": "Binary",
+//     "operator": "/",
+//     "left": {
+//       "type": "Identifier",
+//       "name": "x"
+//     },
+//     "right": {
+//       "type": "Identifier",
+//       "name": "y"
+//     }
+//   }
+// }
 
 trace(expr.getVariables());
 // prints: ["x", "y"]
@@ -80,11 +80,11 @@ var result = group.evaluate([
 
 trace(result);
 // prints:
-{
-  MAP_1 => 14.1,
-  MAP_2 => 142.17,
-  MAP_3 => 45.471,
-  SOURCE_1 => 2.34,
-  SOURCE_2 => 3.14,
-}
+// {
+//   MAP_1 => 14.1,
+//   MAP_2 => 142.17,
+//   MAP_3 => 45.471,
+//   SOURCE_1 => 2.34,
+//   SOURCE_2 => 3.14,
+// }
 ```
