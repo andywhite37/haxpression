@@ -278,6 +278,20 @@ abstract Expression(ExpressionType) {
     };
   }
 
+  public function isLiteral(?value : Value) : Bool {
+    return switch toExpressionType() {
+      case Literal(v) : value != null ? value.toDynamic() == v.toDynamic() : true;
+      case _: false;
+    };
+  }
+
+  public function isIdentifier(?name : String) : Bool {
+    return switch toExpressionType() {
+      case Identifier(n) : name != null ? name == n : true;
+      case _: false;
+    };
+  }
+
   public function isCompound() : Bool {
     return switch toExpressionType() {
       case Compound(_) : true;

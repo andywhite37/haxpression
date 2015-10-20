@@ -1,12 +1,14 @@
 package haxpression.utils;
 
 using StringTools;
+using haxpression.utils.Arrays;
 
 class Chars {
   public static var PERIOD(default, never) = ".";
   public static var COMMA(default, never) = ",";
   public static var SINGLE_QUOTE(default, never) = "'";
   public static var DOUBLE_QUOTE(default, never) = '"';
+  public static var EXCLAMATION_POINT(default, never) = "!";
   public static var OPEN_PAREN(default, never) = "(";
   public static var CLOSE_PAREN(default, never) = ")";
   public static var OPEN_BRACKET(default, never) = "[";
@@ -19,6 +21,7 @@ class Chars {
   public static var LF_CODE(default, never) = 10;
   public static var CR_CODE(default, never) = 13;
   public static var SPACE_CODE(default, never) = 32;
+  public static var EXCLAMATION_POINT_CODE(default, never) = 33;
   public static var DOUBLE_QUOTE_CODE(default, never) = 34;
   public static var DOLLAR_CODE(default, never) = 36;
   public static var SINGLE_QUOTE_CODE(default, never) = 39;
@@ -32,6 +35,10 @@ class Chars {
   public static var OPEN_BRACKET_CODE(default, never) = 91;
   public static var CLOSE_BRACKET_CODE(default, never) = 93;
   public static var UNDERSCORE_CODE(default, never) = 95;
+
+  // allow for other characters starting/inside identifiers
+  public static var OTHER_IDENTIFIER_START_CODES = [];
+  public static var OTHER_IDENTIFIER_PART_CODES = [EXCLAMATION_POINT_CODE, COLON_CODE];
 
   public static function isDecimalDigit(charCode : Int) : Bool {
     return charCode >= 48 && charCode <= 57;
@@ -49,12 +56,14 @@ class Chars {
     return charCode == DOLLAR_CODE ||
       charCode == UNDERSCORE_CODE ||
       isUpperCaseLetter(charCode) ||
-      isLowerCaseLetter(charCode);
+      isLowerCaseLetter(charCode) ||
+      OTHER_IDENTIFIER_START_CODES.contains(charCode);
   }
 
   public static function isIdentifierPart(charCode : Int) : Bool {
     return isIdentifierStart(charCode) ||
-      isDecimalDigit(charCode);
+      isDecimalDigit(charCode) ||
+      OTHER_IDENTIFIER_PART_CODES.contains(charCode);
   }
 
   public static function isWhiteSpace(charCode : Int) : Bool {

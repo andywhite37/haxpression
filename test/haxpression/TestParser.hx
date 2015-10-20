@@ -1,6 +1,7 @@
 package haxpression;
 
 import utest.Assert;
+import haxpression.ExpressionType;
 using haxpression.AssertExpressionString;
 
 class TestParser {
@@ -22,7 +23,7 @@ class TestParser {
     " 2  +  3 ".evaluatesToInt(5);
   }
 
-  public function testLogical() {
+  public function testBinaryLogical() {
     "true || false".evaluatesToTrue();
     "false || true".evaluatesToTrue();
     "true || true".evaluatesToTrue();
@@ -54,36 +55,36 @@ class TestParser {
     "false || false && false".evaluatesToFalse();
   }
 
-  public function testAddition() {
+  public function testBinaryAddition() {
     "2 + 3".evaluatesToInt(2 + 3);
     "3 + 4.7".evaluatesToFloat(3 + 4.7);
     "2 + 3 + 4.7".evaluatesToFloat(2 + 3 + 4.7);
   }
 
-  public function testSubtraction() {
+  public function testBinarySubtraction() {
     "2 - 3".evaluatesToInt(2 - 3);
     "3 - 4.7".evaluatesToFloat(3 - 4.7);
     "2 - 3 - 4.7".evaluatesToFloat(2 - 3 - 4.7);
   }
 
-  public function testAdditionAndSubtraction() {
+  public function testBinaryAdditionAndSubtraction() {
     "2 - 3 + 4.7".evaluatesToFloat(2 - 3 + 4.7);
     "2 + 3 - 4.7".evaluatesToFloat(2 + 3 - 4.7);
   }
 
-  public function testMultiplication() {
+  public function testBinaryMultiplication() {
     '2 * 3'.evaluatesToInt(2 * 3);
     '2 * 4.7'.evaluatesToFloat(2 * 4.7);
     '2 * 4.7 * 3'.evaluatesToFloat(2 * 4.7 * 3);
   }
 
-  public function testDivision() {
+  public function testBinaryDivision() {
     '2 / 3'.evaluatesToFloat(2 / 3);
     '2 / 4.7'.evaluatesToFloat(2 / 4.7);
     '2 / 4.7 / 3'.evaluatesToFloat(2 / 4.7 / 3);
   }
 
-  public function testMultiplicationAndDivison() {
+  public function testBinaryMultiplicationAndDivison() {
     '2 * 4.7 / 3'.evaluatesToFloat(2 * 4.7 / 3);
     '2 / 4.7 * 3'.evaluatesToFloat(2 / 4.7 * 3);
   }
@@ -94,6 +95,13 @@ class TestParser {
       "r" => 10
     ]);
     Assert.same(Math.PI * Math.pow(10, 2), result1);
+  }
+
+  public function testIdentifier() {
+    Assert.isTrue(("MYVAR" : Expression).isIdentifier("MYVAR"));
+    Assert.isTrue(("NS!VAR" : Expression).isIdentifier("NS!VAR"));
+    Assert.isTrue(("NS!VAR:TWO" : Expression).isIdentifier("NS!VAR:TWO"));
+    Assert.isTrue(("$NS_START!VAR:TWO" : Expression).isIdentifier("$NS_START!VAR:TWO"));
   }
 
   public function testToString(){
