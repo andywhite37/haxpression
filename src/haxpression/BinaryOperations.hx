@@ -8,6 +8,7 @@ class BinaryOperations {
 
   public static function __init__() {
     map = new Map();
+    // Higher numbers have higher precedence (higher precedence ops will be evaluated before lower)
     add("||", 1, function(left, right) return left.toBool() || right.toBool());
     add("&&", 2, function(left, right) return left.toBool() && right.toBool());
     add("|", 3, function(left, right) return left.toInt() | right.toInt());
@@ -69,10 +70,9 @@ class BinaryOperations {
 
   static function wrapOperation(operation : Value -> Value -> Value) : Value -> Value -> Value {
     return function(left : Value, right : Value) : Value {
-      if (left.isNone() || right.isNone()) {
-        return VNone;
-      }
-      return operation(left, right);
+      return if (left.isNA() || right.isNA()) return VNA;
+        else if (left.isNM() || right.isNM()) return VNM;
+        else operation(left, right);
     }
   }
 }

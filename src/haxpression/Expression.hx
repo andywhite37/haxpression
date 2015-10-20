@@ -262,7 +262,7 @@ abstract Expression(ExpressionType) {
       case Array(items):
         // We'll just assume the value of an array expression is the last value
         // or none if there are no items in the array
-        if (items.length == 0) VNone;
+        if (items.length == 0) VNA;
         else {
           var values = items.evaluate(variables);
           values[values.length - 1];
@@ -270,7 +270,7 @@ abstract Expression(ExpressionType) {
       case Compound(items):
         // We'll just assume the value of an compound expression is the last value
         // or none if there are no items in the array
-        if (items.length == 0) VNone;
+        if (items.length == 0) VNA;
         else {
           var values = items.evaluate(variables);
           values[values.length - 1];

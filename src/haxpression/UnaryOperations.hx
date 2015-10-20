@@ -48,10 +48,9 @@ class UnaryOperations {
 
   static function wrapOperation(operation : Value -> Value) : Value -> Value {
     return function(value : Value) : Value {
-      if (value.isNone()) {
-        return VNone;
-      }
-      return operation(value);
+      return if (value.isNA()) return VNA;
+        else if (value.isNM()) return VNM;
+        else operation(value);
     }
   }
 }

@@ -1,13 +1,16 @@
 package haxpression;
 
 import haxpression.ValueType;
+using StringTools;
 using haxpression.utils.Arrays;
+using haxpression.utils.Strings;
 
 abstract Value(ValueType) {
-  public static var NONE_STRING(default, never) = "NA";
-  public static var NONE_PARSE_STRINGS(default, never) = [NONE_STRING, "", "none", "N/A"];
-  public static var TRUE_STRING(default, never) = "true";
-  public static var FALSE_STRING(default, never) = "false";
+  static var NA_STRING(default, never) = "na";
+  static var NM_STRING(default, never) = "nm";
+  static var NULL_STRING(default, never) = "null";
+  static var TRUE_STRING(default, never) = "true";
+  static var FALSE_STRING(default, never) = "false";
 
   public function new(valueType : ValueType) {
     this = valueType;
@@ -40,30 +43,15 @@ abstract Value(ValueType) {
 
   @:from
   public static function fromString(v : String) : Value {
-    // null value becomes VNone
-    if (v == null || v == "null") {
-      return VNone;
-    }
-
-    // None-like strings become VNone
-    var match = NONE_PARSE_STRINGS.find(function(str) return str == v);
-    if (match != null) {
-      return VNone;
-    }
-
-    if (v == TRUE_STRING) {
-      return VBool(true);
-    }
-
-    if (v == FALSE_STRING) {
-      return VBool(false);
-    }
-
-    return try {
-      VFloat(Std.parseFloat(v));
-    } catch (e : Dynamic) {
-      VNone;
-    }
+    if (v.isEmpty()) return VNA;
+    var vl = v.toLowerCase();
+    return if (vl == NULL_STRING || vl == NA_STRING) VNA;
+      else if (vl == NM_STRING) VNM;
+      else if (vl == TRUE_STRING) VBool(true);
+      else if (vl == FALSE_STRING) VBool(false);
+      else if (stringIsInt(v)) VInt(Std.parseInt(v));
+      else if (stringIsFloat(v)) VFloat(Std.parseFloat(v));
+      else VString(v);
   }
 
   @:to
@@ -71,9 +59,10 @@ abstract Value(ValueType) {
     return switch this {
       case VFloat(v) : v;
       case VInt(v) : v;
-      case VBool(v) : throw new Error('cannot convert VBool to Float');
-      case VString(v) : throw new Error('cannot convert VSTring to Float');
-      case VNone : throw new Error('cannot convert VNone to Float');
+      case VBool(v) : throw new Error('cannot convert Bool to Float');
+      case VString(v) : throw new Error('cannot convert String to Float');
+      case VNA : throw new Error('cannot convert NA to Float');
+      case VNM : throw new Error('cannot convert NM to Float');
     };
   }
 
@@ -82,20 +71,22 @@ abstract Value(ValueType) {
     return switch this {
       case VFloat(v) : Std.int(v);
       case VInt(v) : v;
-      case VBool(v) : throw new Error('cannot convert VBool to Int');
-      case VString(v) : throw new Error('cannot convert VString to Int');
-      case VNone : throw new Error('cannot convert VNone to Int');
+      case VBool(v) : throw new Error('cannot convert Bool to Int');
+      case VString(v) : throw new Error('cannot convert String to Int');
+      case VNA : throw new Error('cannot convert NA to Int');
+      case VNM : throw new Error('cannot convert NM to Int');
     };
   }
 
   @:to
   public function toBool() : Bool {
     return switch this {
-      case VFloat(v) : v != 0;
+      case VFloat(v) : v != 0.0;
       case VInt(v) : v != 0;
       case VBool(v) : v;
-      case VString(v) : v == TRUE_STRING;
-      case VNone : throw new Error('cannot convert VNone to Bool');
+      case VString(v) : v.toLowerCase() == TRUE_STRING;
+      case VNA : throw new Error('cannot convert NA to Bool');
+      case VNM : throw new Error('cannot convert NM to Bool');
     };
   }
 
@@ -106,7 +97,8 @@ abstract Value(ValueType) {
       case VInt(v) : Std.string(v);
       case VBool(v) : v ? TRUE_STRING : FALSE_STRING;
       case VString(v) : v;
-      case VNone : NONE_STRING;
+      case VNA : NA_STRING;
+      case VNM : NM_STRING;
     };
   }
 
@@ -116,7 +108,8 @@ abstract Value(ValueType) {
       case VInt(v) : v;
       case VBool(v) : v;
       case VString(v) : v;
-      case VNone : null;
+      case VNA : null;
+      case VNM : null;
     };
   }
 
@@ -128,10 +121,30 @@ abstract Value(ValueType) {
     };
   }
 
-  public function isNone() : Bool {
+  public function isNA() : Bool {
     return switch this {
-      case VNone: true;
+      case VNA: true;
       case _: false;
     };
+  }
+
+  public function isNM() : Bool {
+    return switch this {
+      case VNM: true;
+      case _: false;
+    };
+  }
+
+  public function isNone() : Bool {
+    return isNA() || isNM();
+  }
+
+  public static function stringIsFloat(input : String) : Bool {
+    if (input.isEmpty()) return false;
+    return ~/^[+-]?(?:\d*)(?:\.\d*)?(?:[eE][+-]?\d+)?$/.match(input);
+  }
+
+  public static function stringIsInt(input : String) : Bool {
+    return ~/^\d+$/.match(input);
   }
 }

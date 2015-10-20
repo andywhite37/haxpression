@@ -8,4 +8,8 @@ class Strings {
   public static function icontains(target : String, test : String) : Bool {
     return target.toLowerCase().indexOf(test.toLowerCase()) != -1;
   }
+
+  public static function isEmpty(input : String) : Bool {
+    return input == null || input == "";
+  }
 }

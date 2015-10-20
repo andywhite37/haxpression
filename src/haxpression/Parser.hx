@@ -302,7 +302,7 @@ class Parser {
     } else if (identifier == "false") {
       return Literal(false);
     } else if (identifier == "null") {
-      return Literal(VNone);
+      return Literal(VNA);
     } else {
       return Identifier(identifier);
     }
