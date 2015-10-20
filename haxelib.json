@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "classPath": "src/",
-  "releasenote": "Change VNone to VNA and VNM",
+  "releasenote": "Allow other identifier characters",
   "contributors": ["andywhite37"],
   "dependencies": {
     "utest": ""
