@@ -2,6 +2,8 @@ package haxpression;
 
 import Lambda;
 import haxpression.ValueType;
+using haxpression.utils.Arrays;
+using haxpression.utils.Iterators;
 
 class BinaryOperations {
   static var map(default, null) : Map<String, { precedence : Int, operation: Value -> Value -> Value }>;
@@ -59,13 +61,9 @@ class BinaryOperations {
   }
 
   public static function getMaxOperatorLength() : Int {
-    var max = 0;
-    for (key in map.keys()) {
-      if (key.length > max) {
-        max = key.length;
-      }
-    }
-    return max;
+    return map.keys().toArray().reduce(function(maxLength : Int, key : String) : Int {
+      return key.length > maxLength ? key.length : maxLength;
+    }, 0);
   }
 
   static function wrapOperation(operation : Value -> Value -> Value) : Value -> Value -> Value {

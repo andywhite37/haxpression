@@ -24,7 +24,7 @@ class TestArrays {
   }
 
   public function testReduce() {
-    Assert.same({ sum: 15, product: 120 }, [1, 2, 3, 4, 5].reduce(function(i, acc) {
+    Assert.same({ sum: 15, product: 120 }, [1, 2, 3, 4, 5].reduce(function(acc, i) {
       acc.sum += i;
       acc.product *= i;
       return acc;

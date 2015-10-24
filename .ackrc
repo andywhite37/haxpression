@@ -1,0 +1,3 @@
+--ignore-file=ext:orig
+--ignore-dir=bin
+--ignore-dir=.haxelib

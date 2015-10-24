@@ -34,9 +34,9 @@ class Arrays {
     return items.filter(check).length == items.length;
   }
 
-  public static function reduce<T, TResult>(items : Array<T>, callback : T -> TResult -> TResult, acc : TResult) : TResult {
+  public static function reduce<T, TResult>(items : Array<T>, callback : TResult -> T -> TResult, acc : TResult) : TResult {
     for (item in items) {
-      acc = callback(item, acc);
+      acc = callback(acc, item);
     }
     return acc;
   }
