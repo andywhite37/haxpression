@@ -36,6 +36,56 @@ class TestExpressionGroup {
     //trace(result);
   }
 
+  public function testCanExpand() {
+    var group = new ExpressionGroup([
+      'A' => 1,
+      'B' => 2,
+      'AB' => 'A * B'
+    ]);
+    Assert.isTrue(group.canExpand());
+  }
+
+  public function testExpand() {
+    var expressionGroup = new ExpressionGroup([
+      'A' => 1,
+      'B' => 2,
+      'C' => 3,
+      'D' => 4,
+      'A_PLUS_B' => 'A + B',
+      'B_PLUS_C' => 'B + C',
+      'C_PLUS_D' => 'C + D',
+      'X_PLUS_Y' => 'X + Y',
+      'A_PLUS_B_PLUS_X' => 'A_PLUS_B + X'
+    ]);
+
+    Assert.isTrue(expressionGroup.canExpand());
+    var result = expressionGroup.expand();
+    Assert.same({
+      A: 1,
+      A_PLUS_B: '(1 + 2)',
+      A_PLUS_B_PLUS_X: '((1 + 2) + X)',
+      B: 2,
+      B_PLUS_C: '(2 + 3)',
+      C: 3,
+      C_PLUS_D: '(3 + 4)',
+      D: 4,
+      X_PLUS_Y: '(X + Y)',
+    }, result.toObject());
+
+    var simplified = result.simplify();
+    Assert.same({
+      A: 1,
+      A_PLUS_B: 3,
+      A_PLUS_B_PLUS_X: '(3 + X)',
+      B: 2,
+      B_PLUS_C: 5,
+      C: 3,
+      C_PLUS_D: 7,
+      D: 4,
+      X_PLUS_Y: '(X + Y)',
+    }, simplified.toObject());
+  }
+
   public function testValidate() {
     // TODO: check for cycles
     Assert.pass();

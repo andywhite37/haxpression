@@ -43,6 +43,13 @@ abstract Expression(ExpressionType) {
     };
   }
 
+  public function toDynamic() : Dynamic {
+    return switch this {
+      case Literal(value) : value.toDynamic();
+      case _ : toString();
+    };
+  }
+
   public function toObject() : {} {
     return switch this {
       case Literal(value) : {

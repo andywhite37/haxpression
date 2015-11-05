@@ -18,19 +18,13 @@ class ExpressionGroup {
     });
   }
 
-  public function addVariable(variable : String, expressionOrValue : ExpressionOrValue) : ExpressionGroup {
+  public function setVariable(variable : String, expressionOrValue : ExpressionOrValue) : ExpressionGroup {
     var result = clone();
     result.variableMap.set(variable, expressionOrValue);
     return result;
   }
 
-  public function removeVariable(variable : String) : ExpressionGroup {
-    var result = clone();
-    result.variableMap.remove(variable);
-    return result;
-  }
-
-  public function addValues(variables : Map<String, Value>) : ExpressionGroup {
+  public function setVariables(variables : Map<String, Value>) : ExpressionGroup {
     var result = clone();
     for (variable in variables.keys()) {
       if (result.variableMap.exists(variable)) {
@@ -38,6 +32,12 @@ class ExpressionGroup {
       }
       result.variableMap.set(variable, variables[variable]);
     }
+    return result;
+  }
+
+  public function removeVariable(variable : String) : ExpressionGroup {
+    var result = clone();
+    result.variableMap.remove(variable);
     return result;
   }
 
@@ -53,14 +53,48 @@ class ExpressionGroup {
     });
   }
 
+  public function canExpand() : Bool {
+    var topLevelVariables = getVariables();
+    if (topLevelVariables.isEmpty()) return false;
+    return any(function(variable, expressionOrValue) {
+      var expressionVariables = expressionOrValue.toExpression().getVariables();
+      return if (expressionVariables.isEmpty()) {
+        false;
+      } else {
+        topLevelVariables.containsAny(expressionVariables);
+      }
+    });
+  }
+
+  public function expand() : ExpressionGroup {
+    var result = clone();
+    var topLevelVariables = result.getVariables();
+    while (result.canExpand()) {
+      for (topLevelVariable in topLevelVariables) { // AB
+        var topLevelExpression = result.getExpression(topLevelVariable); // A * B
+        var topLevelExpressionVariables = topLevelExpression.getVariables(); // [A, B]
+        for (topLevelExpressionVariable in topLevelExpressionVariables) { // A
+          if (topLevelVariables.contains(topLevelExpressionVariable)) {
+            topLevelExpression = topLevelExpression.substitute([
+              topLevelExpressionVariable => result.getExpression(topLevelExpressionVariable)
+            ]);
+            result = result.setVariable(topLevelVariable, topLevelExpression);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   public function canEvaluate() {
     return all(function(variable, expressionOrValue) {
       return expressionOrValue.toExpression().canEvaluate();
     });
   }
 
+  // TODO: use graphx topologicalSort to on variable dependency graph
   public function evaluate(?variables : Map<String, Value>) : Map<String, Value> {
-    var result = variables != null ? addValues(variables) : clone();
+    var result = variables != null ? setVariables(variables) : clone();
 
     // Loop and substitute variables with expressions and eventually values until
     // all expressions in the group can be evaluated from raw values
@@ -86,7 +120,7 @@ class ExpressionGroup {
           topLevelExpression = topLevelExpression.substitute([
             topLevelExpressionVariable => result.getExpression(topLevelExpressionVariable)
           ]);
-          result = result.addVariable(topLevelVariable, topLevelExpression);
+          result = result.setVariable(topLevelVariable, topLevelExpression);
         }
       }
     }
@@ -98,7 +132,7 @@ class ExpressionGroup {
   }
 
   public function getVariables(?includeExpressions : Bool = false) : Array<String> {
-    var variables = variableMap.keys().toArray().reduce(function(acc : Array<String>, variable : String) : Array<String> {
+    var variables = variableMap.keys().toArray().reduce(function(acc : Array<String>, variable) {
       if (!acc.contains(variable)) {
         acc.push(variable);
       }
@@ -141,7 +175,7 @@ class ExpressionGroup {
 
   public function toObject() : {} {
     return cast reduce(function(acc : {}, variable, expressionOrValue) : {} {
-      Reflect.setField(acc, variable, expressionOrValue.toExpression().toString());
+      Reflect.setField(acc, variable, expressionOrValue.toDynamic());
       return acc;
     }, {});
   }
@@ -157,7 +191,7 @@ class ExpressionGroup {
   }
 
   function any(callback : String -> ExpressionOrValue -> Bool) : Bool {
-    return getVariables().all(function(variable) {
+    return getVariables().any(function(variable) {
       return callback(variable, variableMap[variable]);
     });
   }

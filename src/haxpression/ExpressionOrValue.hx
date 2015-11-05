@@ -65,4 +65,11 @@ abstract ExpressionOrValue(Either<Expression, Value>) {
       case Right(value): value;
     };
   }
+
+  public function toDynamic() : Dynamic {
+    return switch this {
+      case Left(expression) : expression.toDynamic();
+      case Right(value) : value.toDynamic();
+    };
+  }
 }
