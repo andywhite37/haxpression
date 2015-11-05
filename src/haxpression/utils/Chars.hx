@@ -38,7 +38,7 @@ class Chars {
 
   // allow for other characters starting/inside identifiers
   public static var OTHER_IDENTIFIER_START_CODES = [];
-  public static var OTHER_IDENTIFIER_PART_CODES = [EXCLAMATION_POINT_CODE, COLON_CODE];
+  public static var OTHER_IDENTIFIER_PART_CODES = [EXCLAMATION_POINT_CODE, DOLLAR_CODE, COLON_CODE];
 
   public static function isDecimalDigit(charCode : Int) : Bool {
     return charCode >= 48 && charCode <= 57;

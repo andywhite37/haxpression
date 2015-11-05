@@ -42,6 +42,11 @@ class TestExpression {
   public function testToString() {
     (Binary("+", Literal(1), Literal(2)) : Expression).toStringSameAs("(1 + 2)");
     (Binary("+", Binary("+", Literal(1), Literal(2)), Literal(3)) : Expression).toStringSameAs("((1 + 2) + 3)");
+    ("MY_IDENT" : Expression).toStringSameAs("MY_IDENT");
+    ("1" : Expression).toStringSameAs("1");
+    ("COALESCE(1, 2, 3 + 5, 4)" : Expression).toStringSameAs("COALESCE(1, 2, (3 + 5), 4)");
+    ("1 + 2; 3 + 4; 5" : Expression).toStringSameAs("(1 + 2); (3 + 4); 5");
+    ("[1 + 2, 3 + 4, 5]" : Expression).toStringSameAs("[(1 + 2), (3 + 4), 5]");
   }
 
   public function testSubstituteValue() {

@@ -337,6 +337,6 @@ abstract Expression(ExpressionType) {
 
   function getStringDelimited(expressionTypes : Array<ExpressionType>, delimiter : String) : String {
     delimiter = '${delimiter.trim()} ';
-    return expressionTypes.map(function(expressionType) getString(expressionType)).join(delimiter);
+    return expressionTypes.map(getString).join(delimiter);
   }
 }
