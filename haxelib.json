@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "classPath": "src/",
-  "releasenote": "Add ExpressionGroup canExpand and expand functions",
+  "releasenote": "Allow for CallOperations of unspecified arity",
   "contributors": ["andywhite37"],
   "dependencies": {
     "utest": ""
