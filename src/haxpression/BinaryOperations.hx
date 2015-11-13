@@ -11,48 +11,48 @@ class BinaryOperations {
   public static function __init__() {
     map = new Map();
     // Higher numbers have higher precedence (higher precedence ops will be evaluated before lower)
-    add("||", 1, function(left, right) return left.toBool() || right.toBool());
-    add("&&", 2, function(left, right) return left.toBool() && right.toBool());
-    add("|", 3, function(left, right) return left.toInt() | right.toInt());
-    add("^", 4, function(left, right) return left.toInt() ^ right.toInt());
-    add("&", 5, function(left, right) return left.toInt() & right.toInt());
-    add("==", 6, function(left, right) return left.toFloat() == right.toFloat());
-    add("!=", 6, function(left, right) return left.toFloat() != right.toFloat());
-    add("<", 7, function(left, right) return left.toFloat() < right.toFloat());
-    add(">", 7, function(left, right) return left.toFloat() > right.toFloat());
-    add("<=", 7, function(left, right) return left.toFloat() <= right.toFloat());
-    add(">=", 7, function(left, right) return left.toFloat() >= right.toFloat());
-    add("<<", 8, function(left, right) return left.toInt() << right.toInt());
-    add(">>", 8, function(left, right) return left.toInt() >> right.toInt());
-    add(">>>", 8, function(left, right) return left.toInt() >>> right.toInt());
-    add("+", 9, function(left, right) return left.toFloat() + right.toFloat());
-    add("-", 9, function(left, right) return left.toFloat() - right.toFloat());
-    add("*", 10, function(left, right) return left.toFloat() * right.toFloat());
-    add("/", 10, function(left, right) return left.toFloat() / right.toFloat());
-    add("%", 10, function(left, right) return left.toFloat() % right.toFloat());
-    add("**", 11, function(left, right) return Math.pow(left.toFloat(), right.toFloat()));
+    addOperator("||", 1, function(left, right) return left.toBool() || right.toBool());
+    addOperator("&&", 2, function(left, right) return left.toBool() && right.toBool());
+    addOperator("|", 3, function(left, right) return left.toInt() | right.toInt());
+    addOperator("^", 4, function(left, right) return left.toInt() ^ right.toInt());
+    addOperator("&", 5, function(left, right) return left.toInt() & right.toInt());
+    addOperator("==", 6, function(left, right) return left.toFloat() == right.toFloat());
+    addOperator("!=", 6, function(left, right) return left.toFloat() != right.toFloat());
+    addOperator("<", 7, function(left, right) return left.toFloat() < right.toFloat());
+    addOperator(">", 7, function(left, right) return left.toFloat() > right.toFloat());
+    addOperator("<=", 7, function(left, right) return left.toFloat() <= right.toFloat());
+    addOperator(">=", 7, function(left, right) return left.toFloat() >= right.toFloat());
+    addOperator("<<", 8, function(left, right) return left.toInt() << right.toInt());
+    addOperator(">>", 8, function(left, right) return left.toInt() >> right.toInt());
+    addOperator(">>>", 8, function(left, right) return left.toInt() >>> right.toInt());
+    addOperator("+", 9, function(left, right) return left.toFloat() + right.toFloat());
+    addOperator("-", 9, function(left, right) return left.toFloat() - right.toFloat());
+    addOperator("*", 10, function(left, right) return left.toFloat() * right.toFloat());
+    addOperator("/", 10, function(left, right) return left.toFloat() / right.toFloat());
+    addOperator("%", 10, function(left, right) return left.toFloat() % right.toFloat());
+    addOperator("**", 11, function(left, right) return Math.pow(left.toFloat(), right.toFloat()));
   }
 
   public static function evaluate(operator, left : Value, right : Value) : Value {
     return map.get(operator).operation(left, right);
   }
 
-  public static function add(operator : String, precedence : Int, operation : Value -> Value -> Value) {
+  public static function addOperator(operator : String, precedence : Int, operation : Value -> Value -> Value) {
     map.set(operator, {
       precedence: precedence,
       operation: wrapOperation(operation)
     });
   }
 
-  public static function remove(operator : String) {
+  public static function removeOperator(operator : String) {
     map.remove(operator);
   }
 
-  public static function has(operator : String) : Bool {
+  public static function hasOperator(operator : String) : Bool {
     return map.exists(operator);
   }
 
-  public static function clear() {
+  public static function clearOperators() {
     map = new Map();
   }
 

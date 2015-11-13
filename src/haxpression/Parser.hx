@@ -90,7 +90,7 @@ class Parser {
     var toCheck = inputString.substr(index, BinaryOperations.getMaxOperatorLength());
     var toCheckLength = toCheck.length;
     while (toCheckLength > 0) {
-      if (BinaryOperations.has(toCheck)) {
+      if (BinaryOperations.hasOperator(toCheck)) {
         index += toCheckLength;
         return toCheck;
       }
@@ -186,7 +186,7 @@ class Parser {
       var toCheck = inputString.substr(index, UnaryOperations.getMaxOperatorLength());
       var toCheckLength = toCheck.length;
       while (toCheckLength > 0) {
-        if (UnaryOperations.has(toCheck)) {
+        if (UnaryOperations.hasOperator(toCheck)) {
           index += toCheckLength;
           return Unary(toCheck, gobbleToken());
         }

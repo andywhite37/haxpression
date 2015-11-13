@@ -10,31 +10,31 @@ class UnaryOperations {
 
   public static function __init__() {
     map = new Map();
-    add("-", function(value) return value.toFloat() * -1);
-    add("+", function(value) return value.toFloat() * 1);
-    add("!", function(value) return !(value.toBool()));
-    add("~", function(value) return ~(value.toInt()));
+    addOperator("-", function(value) return value.toFloat() * -1);
+    addOperator("+", function(value) return value.toFloat() * 1);
+    addOperator("!", function(value) return !(value.toBool()));
+    addOperator("~", function(value) return ~(value.toInt()));
   }
 
   public static function evaluate(operator : String, value : Value) : Value {
     return map.get(operator).operation(value);
   }
 
-  public static function add(operator : String, operation : Value -> Value) {
+  public static function addOperator(operator : String, operation : Value -> Value) {
     map.set(operator, {
       operation: wrapOperation(operation)
     });
   }
 
-  public static function remove(operator : String) {
+  public static function removeOperator(operator : String) {
     map.remove(operator);
   }
 
-  public static function has(operator : String) : Bool {
+  public static function hasOperator(operator : String) : Bool {
     return map.exists(operator);
   }
 
-  public static function clear() {
+  public static function clearOperators() {
     map = new Map();
   }
 

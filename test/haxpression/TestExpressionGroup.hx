@@ -86,6 +86,16 @@ class TestExpressionGroup {
     }, simplified.toObject());
   }
 
+  public function testExpand2() {
+    var group = new ExpressionGroup([
+      'dfs!SALES$0' => 'CapIQ!IQ_REV + IFNA0(CapIQ!IQ_OTHER_REV)',
+      'dfs!SALES$1' => 'CapIQ!IQ_TOTAL_REV',
+      'dfs!SALES' => 'COALESCE(dfs!SALES$0,dfs!SALES$1)'
+    ]);
+    group = group.expand();
+    Assert.same('COALESCE((CapIQ!IQ_REV + IFNA0(CapIQ!IQ_OTHER_REV)), CapIQ!IQ_TOTAL_REV)', group.getExpression('dfs!SALES').toString());
+  }
+
   public function testValidate() {
     // TODO: check for cycles
     Assert.pass();
