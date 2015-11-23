@@ -1,4 +1,5 @@
 -lib utest
+-lib graphx
 -cp src
 -cp test
 -main haxpression.TestAll

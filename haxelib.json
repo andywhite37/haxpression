@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "classPath": "src/",
-  "releasenote": "Allow for CallOperations of unspecified arity",
+  "releasenote": "Refactor to use graphx lib to sort variable dependencies in ExpressionGroup",
   "contributors": ["andywhite37"],
   "dependencies": {
     "utest": ""

@@ -139,6 +139,23 @@ abstract Value(ValueType) {
     return isNA() || isNM();
   }
 
+  public function equals(other : Value) {
+    return switch [this, other.toValueType()] {
+      case [VFloat(value), VFloat(other)] : value == other;
+      case [VFloat(value), VInt(other)] : value == other;
+
+      case [VInt(value), VInt(other)] : value == other;
+      case [VInt(value), VFloat(other)] : value == Std.int(other);
+
+      case [VBool(value), VBool(other)] : value == other;
+      case [VString(value), VString(other)] : value == other;
+      case [VNA, VNA] : true;
+      case [VNM, VNM] : true;
+
+      case [_, _] : false;
+    };
+  }
+
   public static function stringIsFloat(input : String) : Bool {
     if (input.isEmpty()) return false;
     return ~/^[+-]?(?:\d*)(?:\.\d*)?(?:[eE][+-]?\d+)?$/.match(input);

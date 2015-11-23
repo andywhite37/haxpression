@@ -1,6 +1,7 @@
 package haxpression;
 
 import utest.Assert;
+using haxpression.utils.StringValueMaps;
 
 class TestExpressionGroup {
   public function new() {
@@ -12,28 +13,23 @@ class TestExpressionGroup {
       'MAP_2' => '0.5 * SOURCE_1 + 10 * MAP_1',
       'MAP_3' => '0.2 * MAP_1 + 0.3 * MAP_2',
     ]);
-
     var source1 = 2.34;
     var source2 = 3.14;
-
     var result = expressionGroup.evaluate([
       'SOURCE_1' => source1,
       'SOURCE_2' => source2,
     ]);
-
     var expectedMap1 = 2 * source1 + 3 * source2;
     var expectedMap2 = 0.5 * source1 + 10 * expectedMap1;
     var expectedMap3 = 0.2 * expectedMap1 + 0.3 * expectedMap2;
-
-    Assert.same([
+    var expected : Map<String, Value> = [
       'SOURCE_1' => source1,
       'SOURCE_2' => source2,
       'MAP_1' => expectedMap1,
       'MAP_2' => expectedMap2,
       'MAP_3' => expectedMap3,
-    ], result);
-
-    //trace(result);
+    ];
+    Assert.isTrue(expected.equals(result));
   }
 
   public function testCanExpand() {
@@ -57,7 +53,6 @@ class TestExpressionGroup {
       'X_PLUS_Y' => 'X + Y',
       'A_PLUS_B_PLUS_X' => 'A_PLUS_B + X'
     ]);
-
     Assert.isTrue(expressionGroup.canExpand());
     var result = expressionGroup.expand();
     Assert.same({

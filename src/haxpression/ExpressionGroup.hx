@@ -1,5 +1,9 @@
 package haxpression;
 
+import graphx.Graph;
+import graphx.NodeOrValue;
+import graphx.StringGraph;
+import haxpression.utils.Strings;
 import haxe.Json;
 using haxpression.utils.Arrays;
 using haxpression.utils.Iterators;
@@ -18,21 +22,66 @@ class ExpressionGroup {
     });
   }
 
+  public function hasVariable(variable : String) : Bool {
+    return variableMap.exists(variable);
+  }
+
+  public function getVariables(?includeExpressionVariables : Bool = false) : Array<String> {
+    var variables = variableMap.keys().toArray().reduce(function(variables : Array<String>, variable) {
+      if (!variables.contains(variable)) {
+        variables.push(variable);
+      }
+      if (includeExpressionVariables) {
+        var expression = getExpression(variable);
+        for (expressionVariable in expression.getVariables()) {
+          if (!variables.contains(expressionVariable)) {
+            variables.push(expressionVariable);
+          }
+        }
+      }
+      return variables;
+    }, []);
+    variables.sort(Strings.icompare);
+    return variables;
+  }
+
+  public function getExpressionOrValue(variable : String) : ExpressionOrValue {
+    if (!hasVariable(variable)) {
+      throw new Error('variable $variable is not defined in this expression group');
+    }
+    return variableMap[variable];
+  }
+
+  public function getExpression(variable : String) : Expression {
+    return getExpressionOrValue(variable).toExpression();
+  }
+
+  public function getValue(variable : String) : Value {
+    return getExpressionOrValue(variable).toValue();
+  }
+
   public function setVariable(variable : String, expressionOrValue : ExpressionOrValue) : ExpressionGroup {
     var result = clone();
     result.variableMap.set(variable, expressionOrValue);
     return result;
   }
 
-  public function setVariables(variables : Map<String, Value>) : ExpressionGroup {
-    var result = clone();
-    for (variable in variables.keys()) {
-      if (result.variableMap.exists(variable)) {
+  public function setVariables(expressionOrValueMap : Map<String, ExpressionOrValue>) : ExpressionGroup {
+    var expressionGroup = clone();
+    for (variable in expressionOrValueMap.keys()) {
+      if (expressionGroup.hasVariable(variable)) {
         throw new Error('variable $variable is already defined in expression group');
       }
-      result.variableMap.set(variable, variables[variable]);
+      expressionGroup.variableMap.set(variable, expressionOrValueMap[variable]);
     }
-    return result;
+    return expressionGroup;
+  }
+
+  public function setVariableValues(valueMap : Map<String, Value>) : ExpressionGroup {
+    var expressionOrValueMap = valueMap.mapValues(function(key, value) {
+      return ExpressionOrValue.fromValue(value);
+    }, new Map());
+    return setVariables(expressionOrValueMap);
   }
 
   public function removeVariable(variable : String) : ExpressionGroup {
@@ -41,9 +90,9 @@ class ExpressionGroup {
     return result;
   }
 
-  public function substitute(variables : Map<String, ExpressionOrValue>) : ExpressionGroup {
+  public function substitute(expressionOrValueMap : Map<String, ExpressionOrValue>) : ExpressionGroup {
     return map(function(variable, expressionOrValue) {
-      return expressionOrValue.toExpression().substitute(variables);
+      return expressionOrValue.toExpression().substitute(expressionOrValueMap);
     });
   }
 
@@ -58,119 +107,64 @@ class ExpressionGroup {
     if (topLevelVariables.isEmpty()) return false;
     return any(function(variable, expressionOrValue) {
       var expressionVariables = expressionOrValue.toExpression().getVariables();
-      return if (expressionVariables.isEmpty()) {
-        false;
-      } else {
-        topLevelVariables.containsAny(expressionVariables);
-      }
+      return expressionVariables.isEmpty() ? false : topLevelVariables.containsAny(expressionVariables);
     });
   }
 
   public function expand() : ExpressionGroup {
-    var result = clone();
-    var topLevelVariables = result.getVariables();
-    while (result.canExpand()) {
-      for (topLevelVariable in topLevelVariables) { // AB
-        var topLevelExpression = result.getExpression(topLevelVariable); // A * B
-        var topLevelExpressionVariables = topLevelExpression.getVariables(); // [A, B]
-        for (topLevelExpressionVariable in topLevelExpressionVariables) { // A
-          if (topLevelVariables.contains(topLevelExpressionVariable)) {
-            topLevelExpression = topLevelExpression.substitute([
-              topLevelExpressionVariable => result.getExpression(topLevelExpressionVariable)
-            ]);
-            result = result.setVariable(topLevelVariable, topLevelExpression);
-          }
-        }
+    return getDependencySortedTopLevelVariables().reduce(function(expressionGroup : ExpressionGroup, topLevelVariable) {
+      if (expressionGroup.hasVariable(topLevelVariable)) {
+        var expression = expressionGroup.getExpression(topLevelVariable);
+        return expressionGroup.expandExpressionForVariable(topLevelVariable);
       }
-    }
-    return result;
+      return expressionGroup;
+    }, this);
   }
 
-  public function canEvaluate() {
+  public function expandExpressionForVariable(variable : String) : ExpressionGroup {
+    var expression = getExpression(variable);
+    var expressionVariables = expression.getVariables();
+    var topLevelVariables = getVariables();
+    expression = expressionVariables.reduce(function(expression : Expression, expressionVariable) {
+      if (topLevelVariables.contains(expressionVariable)) {
+        expression = expression.substitute([
+          expressionVariable => getExpression(expressionVariable)
+        ]);
+      }
+      return expression;
+    }, expression);
+    return setVariable(variable, expression);
+  }
+
+  public function canEvaluate() : Bool {
     return all(function(variable, expressionOrValue) {
       return expressionOrValue.toExpression().canEvaluate();
     });
   }
 
-  // TODO: use graphx topologicalSort to on variable dependency graph
-  public function evaluate(?variables : Map<String, Value>) : Map<String, Value> {
-    var result = variables != null ? setVariables(variables) : clone();
+  public function evaluate(?valueMap : Map<String, Value>) : Map<String, Value> {
+    var expressionGroup = valueMap != null ? setVariableValues(valueMap) : clone();
+    return getDependencySortedTopLevelVariables().reduce(function(expressionGroup : ExpressionGroup, topLevelVariable) {
+      expressionGroup = expressionGroup.expandExpressionForVariable(topLevelVariable);
+      return expressionGroup.evaluateExpressionForVariable(topLevelVariable);
+    }, expressionGroup).toValueMap();
+  }
 
-    // Loop and substitute variables with expressions and eventually values until
-    // all expressions in the group can be evaluated from raw values
-    while (!result.canEvaluate()) {
-      var topLevelVariables = result.getVariables();
-
-      for (topLevelVariable in topLevelVariables) {
-        var topLevelExpression = result.getExpression(topLevelVariable);
-
-        if (topLevelExpression.canEvaluate()) {
-          continue;
-        }
-
-        var topLevelExpressionVariables = topLevelExpression.getVariables();
-
-        if (!topLevelVariables.containsAll(topLevelExpressionVariables)) {
-          throw new Error('cannot evaluate expression group with undefined variables');
-        }
-
-        for (topLevelExpressionVariable in topLevelExpressionVariables) {
-          // Replace the variable in the top-level expression with the expression defined
-          // in the group for this variable
-          topLevelExpression = topLevelExpression.substitute([
-            topLevelExpressionVariable => result.getExpression(topLevelExpressionVariable)
-          ]);
-          result = result.setVariable(topLevelVariable, topLevelExpression);
-        }
-      }
+  public function evaluateExpressionForVariable(variable : String) : ExpressionGroup {
+    var expression = getExpression(variable);
+    if (!expression.canEvaluate()) {
+      var variables = expression.getVariables();
+      throw new Error('cannot evaluate expression group variable: $variable with unset variables ${variables.join(", ")} (expression: $expression)');
     }
+    var value = expression.evaluate();
+    return setVariable(variable, value);
+  }
 
-    return result.reduce(function(acc : Map<String, Value>, variable, expressionOrValue) {
-      acc.set(variable, expressionOrValue.toExpression().evaluate(variables).toDynamic());
-      return acc;
+  public function toValueMap() : Map<String, Value> {
+    return getVariables().reduce(function(map : Map<String, Value>, variable) {
+      map.set(variable, getValue(variable));
+      return map;
     }, new Map());
-  }
-
-  public function getVariables(?includeExpressions : Bool = false) : Array<String> {
-    var variables = variableMap.keys().toArray().reduce(function(acc : Array<String>, variable) {
-      if (!acc.contains(variable)) {
-        acc.push(variable);
-      }
-      if (includeExpressions) {
-        var expressionOrValue = variableMap[variable];
-        for (expressionVariable in expressionOrValue.toExpression().getVariables()) {
-          if (!acc.contains(expressionVariable)) {
-            acc.push(expressionVariable);
-          }
-        }
-      }
-      return acc;
-    }, []);
-
-    variables.sort(function(a, b) {
-      a = a.toLowerCase();
-      b = b.toLowerCase();
-      return if (a > b) 1;
-        else if (a < b) -1;
-        else 0;
-    });
-
-    return variables;
-  }
-
-  public function getExpressionOrValue(variable : String) : ExpressionOrValue {
-    if (!variableMap.exists(variable)) {
-      throw new Error('variable $variable is not defined in this expression group');
-    }
-    return variableMap[variable];
-  }
-
-  public function getExpression(variable : String) : Expression {
-    return getExpressionOrValue(variable).toExpression();
-  }
-
-  public function getValue(variable : String) : Value {
-    return getExpressionOrValue(variable).toValue();
   }
 
   public function toObject() : {} {
@@ -184,30 +178,42 @@ class ExpressionGroup {
     return Json.stringify(toObject(), null, '  ');
   }
 
-  function all(callback : String -> ExpressionOrValue -> Bool) : Bool {
+  public function all(callback : String -> ExpressionOrValue -> Bool) : Bool {
     return getVariables().all(function(variable) {
       return callback(variable, variableMap[variable]);
     });
   }
 
-  function any(callback : String -> ExpressionOrValue -> Bool) : Bool {
+  public function any(callback : String -> ExpressionOrValue -> Bool) : Bool {
     return getVariables().any(function(variable) {
       return callback(variable, variableMap[variable]);
     });
   }
 
-  function map(callback : String -> ExpressionOrValue -> ExpressionOrValue) : ExpressionGroup {
-    var newVariableMap : Map<String, ExpressionOrValue> = new Map();
+  public function map(callback : String -> ExpressionOrValue -> ExpressionOrValue) : ExpressionGroup {
+    var newExpressionOrValueMap : Map<String, ExpressionOrValue> = new Map();
     for (variable in getVariables()) {
-      newVariableMap.set(variable, callback(variable, variableMap[variable]));
+      newExpressionOrValueMap.set(variable, callback(variable, variableMap[variable]));
     }
-    return new ExpressionGroup(newVariableMap);
+    return new ExpressionGroup(newExpressionOrValueMap);
   }
 
-  function reduce<T>(callback : T -> String -> ExpressionOrValue -> T, acc : T) : T {
+  public function reduce<T>(callback : T -> String -> ExpressionOrValue -> T, acc : T) : T {
     for (variable in getVariables()) {
       acc = callback(acc, variable, variableMap[variable]);
     }
     return acc;
+  }
+
+  public function getTopLevelVariableDependencyGraph() : Graph<String> {
+    return getVariables().reduce(function(graph : Graph<String>, variable) {
+      var expression = getExpression(variable);
+      var expressionVariables = expression.getVariables();
+      return graph.addEdgesTo(variable, NodeOrValue.mapValues(expressionVariables));
+    }, new StringGraph());
+  }
+
+  public function getDependencySortedTopLevelVariables() : Array<String> {
+    return getTopLevelVariableDependencyGraph().topologicalSort();
   }
 }
