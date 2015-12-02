@@ -60,7 +60,7 @@ class CallOperations {
   public static function canEvaluate(callee : String, arguments : Array<ExpressionType>) : Bool {
     if (!hasFunction(callee)) return false;
     var arity = getArity(callee);
-    if (arity > 0 && arity != arguments.length) return false;
+    if (arity >= 0 && arity != arguments.length) return false;
     return arguments.canEvaluateAll();
   }
 
