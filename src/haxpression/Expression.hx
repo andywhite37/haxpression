@@ -226,7 +226,7 @@ abstract Expression(ExpressionType) {
       case Binary(operator, left, right):
         (left : Expression).canEvaluate() && (right : Expression).canEvaluate();
       case Call(callee, arguments):
-        arguments.canEvaluateAll();
+        CallOperations.canEvaluate(callee, arguments);
       case Conditional(test, consequent, alternate):
         if (!(test : Expression).canEvaluate()) {
           false;

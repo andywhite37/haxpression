@@ -1,5 +1,7 @@
 package haxpression;
 
+using haxpression.ExpressionTypes;
+
 class CallOperations {
   static var map(default, null) : Map<String, { arity: Int, operation: Array<Value> -> Value }>;
 
@@ -22,6 +24,7 @@ class CallOperations {
     addFunction("min", 2, function(arguments) return Math.min(arguments[0].toFloat(), arguments[1].toFloat()));
     addFunction("pow", 2, function(arguments) return Math.pow(arguments[0].toFloat(), arguments[1].toFloat()));
     addFunction("random", 0, function(arguments) return Math.random());
+    addFunction("rand", 0, function(arguments) return Math.random());
     addFunction("round", 1, function(arguments) return Math.round(arguments[0].toFloat()));
     addFunction("sin", 1, function(arguments) return Math.sin(arguments[0].toFloat()));
     addFunction("sqrt", 1, function(arguments) return Math.sqrt(arguments[0].toFloat()));
@@ -40,15 +43,34 @@ class CallOperations {
     return map.exists(callee);
   }
 
+  public static function getFunction(callee : String) : Array<Value> -> Value {
+    if (!hasFunction(callee)) {
+      throw new Error('no function implementation found for name: $callee');
+    }
+    return map.get(callee).operation;
+  }
+
+  public static function getArity(callee : String) : Int {
+    if (!hasFunction(callee)) {
+      throw new Error('no function implementation found for name: $callee');
+    }
+    return map.get(callee).arity;
+  }
+
+  public static function canEvaluate(callee : String, arguments : Array<ExpressionType>) : Bool {
+    if (!hasFunction(callee)) return false;
+    var arity = getArity(callee);
+    if (arity > 0 && arity != arguments.length) return false;
+    return arguments.canEvaluateAll();
+  }
+
   public static function clearFunctions() : Void {
     map = new Map();
   }
 
   public static function evaluate(callee : String, arguments : Array<Value>) : Value {
-    if (!hasFunction(callee)) {
-      throw new Error('no function implementation found for function name: $callee');
-    }
-    return map.get(callee).operation(arguments);
+    var operation = getFunction(callee);
+    return operation(arguments);
   }
 
   static function wrapOperation(callee : String, arity : Int, operation : Array<Value> -> Value) : Array<Value> -> Value {

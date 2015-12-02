@@ -65,4 +65,19 @@ class TestExpression {
     // TODO: this can be simplified more with deeper simplify logic
     ('1 + 2 + y + 4 + x' : Expression).simplify().toStringSameAs('(((3 + y) + 4) + x)');
   }
+
+  public function testCanEvaluate() {
+    Assert.isTrue(('1' : Expression).canEvaluate());
+    Assert.isTrue(('1 + 2' : Expression).canEvaluate());
+    Assert.isTrue(('pow(1, 2)' : Expression).canEvaluate());
+    Assert.isTrue(('rand()' : Expression).canEvaluate());
+    Assert.isFalse(('x' : Expression).canEvaluate());
+    Assert.isFalse(('x + y' : Expression).canEvaluate());
+    Assert.isFalse(('x + 123' : Expression).canEvaluate());
+    Assert.isFalse(('pow(1, x)' : Expression).canEvaluate());
+    Assert.isFalse(('pow()' : Expression).canEvaluate());
+    Assert.isFalse(('pow(1)' : Expression).canEvaluate());
+    Assert.isFalse(('pow(1, 2, 3)' : Expression).canEvaluate());
+    Assert.isFalse(('mybadfunction(1, 2, 3)' : Expression).canEvaluate());
+  }
 }
