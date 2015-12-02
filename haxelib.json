@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "classPath": "src/",
-  "releasenote": "Improve Call expression canEvaluate to check arity",
+  "releasenote": "Add a few more tests",
   "contributors": ["andywhite37"],
   "dependencies": {
     "utest": ""

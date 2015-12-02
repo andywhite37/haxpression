@@ -75,6 +75,8 @@ class TestExpression {
     Assert.isFalse(('x + y' : Expression).canEvaluate());
     Assert.isFalse(('x + 123' : Expression).canEvaluate());
     Assert.isFalse(('pow(1, x)' : Expression).canEvaluate());
+    Assert.isFalse(('pow(, x)' : Expression).canEvaluate());
+    Assert.isFalse(('pow(,)' : Expression).canEvaluate());
     Assert.isFalse(('pow()' : Expression).canEvaluate());
     Assert.isFalse(('pow(1)' : Expression).canEvaluate());
     Assert.isFalse(('pow(1, 2, 3)' : Expression).canEvaluate());
