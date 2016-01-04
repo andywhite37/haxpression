@@ -124,9 +124,8 @@ class ExpressionGroup {
   public function expandExpressionForVariable(variable : String) : ExpressionGroup {
     var expression = getExpression(variable);
     var expressionVariables = expression.getVariables();
-    var topLevelVariables = getVariables();
     expression = expressionVariables.reduce(function(expression : Expression, expressionVariable) {
-      if (topLevelVariables.contains(expressionVariable)) {
+      if (hasVariable(expressionVariable)) {
         expression = expression.substitute([
           expressionVariable => getExpression(expressionVariable)
         ]);
