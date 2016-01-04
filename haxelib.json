@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "classPath": "src/",
-  "releasenote": "Small performance improvement in ExpressionGroup.expand",
+  "releasenote": "Add Config vars to enable/disable deep cloning for expressions/groups (for performance)",
   "contributors": ["andywhite37"],
   "dependencies": {
     "utest": ""
