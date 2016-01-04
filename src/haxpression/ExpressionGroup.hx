@@ -17,6 +17,10 @@ class ExpressionGroup {
   }
 
   public function clone() : ExpressionGroup {
+    if (!Config.useCloneForExpressionGroups) {
+      return this;
+    }
+
     return map(function(variable, expressionOrValue) {
       return expressionOrValue.toExpression().clone();
     });
@@ -85,9 +89,9 @@ class ExpressionGroup {
   }
 
   public function removeVariable(variable : String) : ExpressionGroup {
-    var result = clone();
-    result.variableMap.remove(variable);
-    return result;
+    var expressionGroup = clone();
+    expressionGroup.variableMap.remove(variable);
+    return expressionGroup;
   }
 
   public function substitute(expressionOrValueMap : Map<String, ExpressionOrValue>) : ExpressionGroup {
@@ -112,27 +116,29 @@ class ExpressionGroup {
   }
 
   public function expand() : ExpressionGroup {
-    return getDependencySortedTopLevelVariables().reduce(function(expressionGroup : ExpressionGroup, topLevelVariable) {
+    return time('expand', function() return getDependencySortedVariables().reduce(function(expressionGroup : ExpressionGroup, topLevelVariable) {
       if (expressionGroup.hasVariable(topLevelVariable)) {
         var expression = expressionGroup.getExpression(topLevelVariable);
         return expressionGroup.expandExpressionForVariable(topLevelVariable);
       }
       return expressionGroup;
-    }, this);
+    }, this));
   }
 
   public function expandExpressionForVariable(variable : String) : ExpressionGroup {
-    var expression = getExpression(variable);
-    var expressionVariables = expression.getVariables();
-    expression = expressionVariables.reduce(function(expression : Expression, expressionVariable) {
-      if (hasVariable(expressionVariable)) {
-        expression = expression.substitute([
-          expressionVariable => getExpression(expressionVariable)
-        ]);
-      }
-      return expression;
-    }, expression);
-    return setVariable(variable, expression);
+    return time('expandExpressionForVariable $variable', function() {
+      var expression = getExpression(variable);
+      var expressionVariables = expression.getVariables();
+      expression = expressionVariables.reduce(function(expression : Expression, expressionVariable) {
+        if (hasVariable(expressionVariable)) {
+          expression = expression.substitute([
+            expressionVariable => getExpression(expressionVariable)
+          ]);
+        }
+        return expression;
+      }, expression);
+      return setVariable(variable, expression);
+    });
   }
 
   public function canEvaluate() : Bool {
@@ -143,7 +149,7 @@ class ExpressionGroup {
 
   public function evaluate(?valueMap : Map<String, Value>) : Map<String, Value> {
     var expressionGroup = valueMap != null ? setVariableValues(valueMap) : clone();
-    return getDependencySortedTopLevelVariables().reduce(function(expressionGroup : ExpressionGroup, topLevelVariable) {
+    return getDependencySortedVariables().reduce(function(expressionGroup : ExpressionGroup, topLevelVariable) {
       expressionGroup = expressionGroup.expandExpressionForVariable(topLevelVariable);
       return expressionGroup.evaluateExpressionForVariable(topLevelVariable);
     }, expressionGroup).toValueMap();
@@ -204,15 +210,29 @@ class ExpressionGroup {
     return acc;
   }
 
-  public function getTopLevelVariableDependencyGraph() : Graph<String> {
-    return getVariables().reduce(function(graph : Graph<String>, variable) {
+  public function getVariableDependencyGraph() : Graph<String> {
+    return time('getVariableDependencyGraph', function() return getVariables().reduce(function(graph : Graph<String>, variable) {
       var expression = getExpression(variable);
       var expressionVariables = expression.getVariables();
-      return graph.addEdgesTo(variable, NodeOrValue.mapValues(expressionVariables));
-    }, new StringGraph());
+      return expressionVariables.length > 0 ?
+        graph.addEdgesTo(variable, NodeOrValue.mapValues(expressionVariables)) :
+        graph;
+    }, new StringGraph()));
   }
 
-  public function getDependencySortedTopLevelVariables() : Array<String> {
-    return getTopLevelVariableDependencyGraph().topologicalSort();
+  public function getDependencySortedVariables() : Array<String> {
+    return time('getDependencySortedVariables', function() return getVariableDependencyGraph().topologicalSort());
+  }
+
+  public function time<T>(description : String, callback : Void -> T) : T {
+    /*
+    var startTime = Date.now().getTime();
+    var result = callback();
+    var endTime = Date.now().getTime();
+    var durationMillis = endTime - startTime;
+    trace('$description took $durationMillis ms');
+    return result;
+    */
+    return callback();
   }
 }

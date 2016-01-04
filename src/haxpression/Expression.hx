@@ -135,6 +135,10 @@ abstract Expression(ExpressionType) {
   }
 
   public function clone() : Expression {
+    if (!Config.useCloneForExpressions) {
+      return this;
+    }
+
     return switch this {
       case Literal(value) :
         Literal(value);
