@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "classPath": "src/",
-  "releasenote": "Fix arity check to only ignore arity if negative",
+  "releasenote": "Small performance improvement in ExpressionGroup.expand",
   "contributors": ["andywhite37"],
   "dependencies": {
     "utest": ""
