@@ -116,17 +116,19 @@ class ExpressionGroup {
   }
 
   public function expand() : ExpressionGroup {
-    return time('expand', function() return getDependencySortedVariables().reduce(function(expressionGroup : ExpressionGroup, topLevelVariable) {
-      if (expressionGroup.hasVariable(topLevelVariable)) {
-        var expression = expressionGroup.getExpression(topLevelVariable);
-        return expressionGroup.expandExpressionForVariable(topLevelVariable);
-      }
-      return expressionGroup;
-    }, this));
+    //return time('expand', function() {
+      return getDependencySortedVariables().reduce(function(expressionGroup : ExpressionGroup, topLevelVariable) {
+        if (expressionGroup.hasVariable(topLevelVariable)) {
+          var expression = expressionGroup.getExpression(topLevelVariable);
+          return expressionGroup.expandExpressionForVariable(topLevelVariable);
+        }
+        return expressionGroup;
+      }, this);
+    //)});
   }
 
   public function expandExpressionForVariable(variable : String) : ExpressionGroup {
-    return time('expandExpressionForVariable $variable', function() {
+    //return time('expandExpressionForVariable $variable', function() {
       var expression = getExpression(variable);
       var expressionVariables = expression.getVariables();
       expression = expressionVariables.reduce(function(expression : Expression, expressionVariable) {
@@ -138,7 +140,7 @@ class ExpressionGroup {
         return expression;
       }, expression);
       return setVariable(variable, expression);
-    });
+    //});
   }
 
   public function canEvaluate() : Bool {
@@ -211,28 +213,31 @@ class ExpressionGroup {
   }
 
   public function getVariableDependencyGraph() : Graph<String> {
-    return time('getVariableDependencyGraph', function() return getVariables().reduce(function(graph : Graph<String>, variable) {
-      var expression = getExpression(variable);
-      var expressionVariables = expression.getVariables();
-      return expressionVariables.length > 0 ?
-        graph.addEdgesTo(variable, NodeOrValue.mapValues(expressionVariables)) :
-        graph;
-    }, new StringGraph()));
+    //return time('getVariableDependencyGraph', function() {
+      return getVariables().reduce(function(graph : Graph<String>, variable) {
+        var expression = getExpression(variable);
+        var expressionVariables = expression.getVariables();
+        return expressionVariables.length > 0 ?
+          graph.addEdgesTo(variable, NodeOrValue.mapValues(expressionVariables)) :
+          graph;
+      }, new StringGraph());
+    //});
   }
 
   public function getDependencySortedVariables() : Array<String> {
-    return time('getDependencySortedVariables', function() return getVariableDependencyGraph().topologicalSort());
+    //return time('getDependencySortedVariables', function() {
+      return getVariableDependencyGraph().topologicalSort();
+    //});
   }
 
+  /*
   public function time<T>(description : String, callback : Void -> T) : T {
-    /*
     var startTime = Date.now().getTime();
     var result = callback();
     var endTime = Date.now().getTime();
     var durationMillis = endTime - startTime;
     trace('$description took $durationMillis ms');
     return result;
-    */
-    return callback();
   }
+  */
 }
