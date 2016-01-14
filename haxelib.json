@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "classPath": "src/",
-  "releasenote": "Add Config vars to enable/disable deep cloning for expressions/groups (for performance)",
+  "releasenote": "Add parenthesize option for Expression.toString method",
   "contributors": ["andywhite37"],
   "dependencies": {
     "utest": ""
