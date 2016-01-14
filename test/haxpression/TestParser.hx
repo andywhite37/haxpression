@@ -23,6 +23,31 @@ class TestParser {
     " 2  +  3 ".evaluatesToInt(5);
   }
 
+  public function testBasicNumbers() {
+    switch Parser.parse("1").toExpressionType() {
+      case Literal(value) : Assert.same(1, value.toInt());
+      case _ : Assert.fail();
+    };
+    switch Parser.parse("-1").toExpressionType() {
+      case Unary(operator, operand) : Assert.same("-", operator); Assert.same(1, (operand : Expression).evaluate().toFloat());
+      case _ : Assert.fail();
+    };
+    switch Parser.parse("1.23").toExpressionType() {
+      case Literal(value) : Assert.same(1.23, value.toFloat());
+      case _ : Assert.fail();
+    };
+    switch Parser.parse("-1.23").toExpressionType() {
+      case Unary(operator, operand) : Assert.same("-", operator); Assert.same(1.23, (operand : Expression).evaluate().toFloat());
+      case _ : Assert.fail();
+    };
+  }
+
+  public function testLiteral() {
+    "true".evaluatesToBool(true);
+    "1".evaluatesToInt(1);
+    "-1".evaluatesToInt(-1);
+  }
+
   public function testBinaryLogical() {
     "true || false".evaluatesToTrue();
     "false || true".evaluatesToTrue();
