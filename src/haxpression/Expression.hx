@@ -29,17 +29,20 @@ abstract Expression(ExpressionType) {
     return Parser.parse(input);
   }
 
-  @:to
-  public function toString() : String {
+  public function toString(?options : { ?parenthesize : Bool }) : String {
+    if (options == null) options = {};
+    if (options.parenthesize == null) options.parenthesize = true;
+    var lp = options.parenthesize ? "(" : "";
+    var rp = options.parenthesize ? ")" : "";
     return switch this {
       case Literal(value) : value.toString();
       case Identifier(name) : name;
-      case Unary(operator, operand): '${operator}${getString(operand)}';
-      case Binary(operator, left, right) : '(${getString(left)} $operator ${getString(right)})';
-      case Call(callee, arguments): '${callee}(${getStringDelimited(arguments, ",")})';
-      case Conditional(test, consequent, alternate) : '(${getString(test)} ? ${getString(consequent)} : ${getString(alternate)})';
-      case Array(items): '[${getStringDelimited(items, ",")}]';
-      case Compound(items): getStringDelimited(items, ";");
+      case Unary(operator, operand): '${operator}${getString(operand, options)}';
+      case Binary(operator, left, right) : '${lp}${getString(left, options)} $operator ${getString(right, options)}${rp}';
+      case Call(callee, arguments): '${callee}(${getStringDelimited(arguments, ",", options)})';
+      case Conditional(test, consequent, alternate) : '${lp}${getString(test, options)} ? ${getString(consequent, options)} : ${getString(alternate, options)}${rp}';
+      case Array(items): '[${getStringDelimited(items, ",", options)}]';
+      case Compound(items): getStringDelimited(items, ";", options);
     };
   }
 
@@ -335,12 +338,12 @@ abstract Expression(ExpressionType) {
     };
   }
 
-  function getString(expressionType : ExpressionType) : String {
-    return (expressionType : Expression).toString();
+  function getString(expressionType : ExpressionType, ?options : { ?parenthesize : Bool }) : String {
+    return (expressionType : Expression).toString(options);
   }
 
-  function getStringDelimited(expressionTypes : Array<ExpressionType>, delimiter : String) : String {
+  function getStringDelimited(expressionTypes : Array<ExpressionType>, delimiter : String, ?options : { ?parenthesize : Bool }) : String {
     delimiter = '${delimiter.trim()} ';
-    return expressionTypes.map(getString).join(delimiter);
+    return expressionTypes.map(getString.bind(_, options)).join(delimiter);
   }
 }

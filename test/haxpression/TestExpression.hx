@@ -47,6 +47,12 @@ class TestExpression {
     ("COALESCE(1, 2, 3 + 5, 4)" : Expression).toStringSameAs("COALESCE(1, 2, (3 + 5), 4)");
     ("1 + 2; 3 + 4; 5" : Expression).toStringSameAs("(1 + 2); (3 + 4); 5");
     ("[1 + 2, 3 + 4, 5]" : Expression).toStringSameAs("[(1 + 2), (3 + 4), 5]");
+
+    // parenthesize option
+    Assert.same("((((1 + 2) + 3) + 4) + 5)", ("1 + 2 + 3 + 4 + 5" : Expression).toString());
+    Assert.same("1 + 2 + 3 + 4 + 5", ("1 + 2 + 3 + 4 + 5" : Expression).toString({ parenthesize : false }));
+    Assert.same("((-1 * 2) + (3 * min((1 + 2), 3, 4, PI)))", ("-1 * 2 + 3 * min(1 + 2, 3, 4, PI)" : Expression).toString());
+    Assert.same("-1 * 2 + 3 * min(1 + 2, 3, 4, PI)", ("-1 * 2 + 3 * min(1 + 2, 3, 4, PI)" : Expression).toString({ parenthesize : false }));
   }
 
   public function testSubstituteValue() {
