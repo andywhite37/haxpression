@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "classPath": "src/",
-  "releasenote": "Remove problematic parenthesize option for Expression.toString",
+  "releasenote": "Add sort option from Expression.getVariables function",
   "contributors": ["andywhite37"],
   "dependencies": {
     "utest": ""
