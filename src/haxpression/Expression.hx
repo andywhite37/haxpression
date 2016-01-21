@@ -120,16 +120,20 @@ abstract Expression(ExpressionType) {
     });
   }
 
-  public function getVariables() : Array<String> {
+  public function getVariables(?options : { ?sort: Bool }) : Array<String> {
+    if (options == null) options = {};
+    if (options.sort == null) options.sort = true;
     var variables = [];
     accumulateVariables(variables);
-    variables.sort(function(a, b) {
-      a = a.toLowerCase();
-      b = b.toLowerCase();
-      return if (a > b) 1;
-        else if (a < b) -1;
-        else 0;
-    });
+    if (options.sort) {
+      variables.sort(function(a, b) {
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+        return if (a > b) 1;
+          else if (a < b) -1;
+          else 0;
+      });
+    }
     return variables;
   }
 

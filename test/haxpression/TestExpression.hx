@@ -49,6 +49,11 @@ class TestExpression {
     ("[1 + 2, 3 + 4, 5]" : Expression).toStringSameAs("[(1 + 2), (3 + 4), 5]");
   }
 
+  public function testGetVariables() {
+    Assert.same(["a", "b", "c"], ('b - c + a' : Expression).getVariables());
+    Assert.same(["b", "c", "a"], ('b - c + a' : Expression).getVariables({ sort: false }));
+  }
+
   public function testSubstituteValue() {
     var expr : Expression = Binary("+", Literal(1), Identifier("PI"));
     expr.substitute([ "PI" => Math.PI ]).evaluatesToFloat(1 + Math.PI);
