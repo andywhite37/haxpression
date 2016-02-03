@@ -31,6 +31,14 @@ class AssertExpressionString {
     (input : Expression).evaluatesToNone();
   }
 
+  public static function evaluatesToNA(input : String) : Void {
+    (input : Expression).evaluatesToNA();
+  }
+
+  public static function evaluatesToNM(input : String) : Void {
+    (input : Expression).evaluatesToNM();
+  }
+
   public static function toObjectSameAs(input : String, expected : {}) : Void {
     (input : Expression).toObjectSameAs(expected);
   }

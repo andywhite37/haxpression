@@ -36,6 +36,16 @@ class AssertExpression {
     Assert.isTrue(actual.isNone());
   }
 
+  public static function evaluatesToNA(expression : Expression) : Void {
+    var actual = expression.evaluate();
+    Assert.isTrue(actual.isNA());
+  }
+
+  public static function evaluatesToNM(expression : Expression) : Void {
+    var actual = expression.evaluate();
+    Assert.isTrue(actual.isNM());
+  }
+
   public static function toObjectSameAs(expression : Expression, expected : {}) {
     var actual = expression.toObject();
     Assert.same(expected, actual);

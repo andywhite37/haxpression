@@ -295,17 +295,16 @@ class Parser {
 
     identifier = inputString.substring(start, index);
 
-    // TODO: could add other constants like PI, E, etc.
-
-    if (identifier == "true") {
-      return Literal(true);
-    } else if (identifier == "false") {
-      return Literal(false);
-    } else if (identifier == "null") {
-      return Literal(VNA);
-    } else {
-      return Identifier(identifier);
-    }
+    // Special identifiers that are actually values
+    return switch identifier.toLowerCase() {
+      case "true" : Literal(true);
+      case "false" : Literal(false);
+      case "null" : Literal(VNA);
+      case "undefined" : Literal(VNA);
+      case "na" : Literal(VNA);
+      case "nm" : Literal(VNM);
+      case _ : Identifier(identifier);
+    };
   }
 
   function gobbleArguments(terminationCharCode : Int) : Array<Expression> {

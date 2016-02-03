@@ -44,6 +44,11 @@ class TestParser {
 
   public function testLiteral() {
     "true".evaluatesToBool(true);
+    "false".evaluatesToBool(false);
+    "null".evaluatesToNA();
+    "undefined".evaluatesToNA();
+    "na".evaluatesToNA();
+    "nm".evaluatesToNM();
     "1".evaluatesToInt(1);
     "-1".evaluatesToInt(-1);
   }
