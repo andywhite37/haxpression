@@ -208,4 +208,13 @@ class TestParser {
     });
   }
 
+  public function testErrors() {
+    '1.'.assertParses();
+    ''.assertParses();
+
+    '1 + '.assertParserThrows();
+    'test(1, 2'.assertParserThrows();
+    '1 + 2b'.assertParserThrows();
+    //'test 1 + 2'.assertParserThrows(); // TODO: this probably shouldn't parse (right now it parses to compound)
+  }
 }

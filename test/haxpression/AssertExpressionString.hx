@@ -1,5 +1,6 @@
 package haxpression;
 
+import utest.Assert;
 using haxpression.AssertExpression;
 
 class AssertExpressionString {
@@ -45,5 +46,25 @@ class AssertExpressionString {
 
   public static function toStringSameAs(input : String, expected : {}) : Void {
     (input : Expression).toStringSameAs(expected);
+  }
+
+  public static function assertParses(input : String) : Void {
+    try {
+      var expr = Parser.parse(input);
+      Assert.pass();
+    } catch (e : Dynamic) {
+      Assert.fail('"$input" should have parsed');
+      trace(e);
+    }
+  }
+
+  public static function assertParserThrows(input : String) : Void {
+    try {
+      var expr = Parser.parse(input);
+      Assert.fail('"$input" should not have parsed');
+      trace(expr.toExpressionType());
+    } catch (e : Dynamic) {
+      Assert.pass();
+    }
   }
 }

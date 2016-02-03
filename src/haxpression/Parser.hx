@@ -34,7 +34,7 @@ class Parser {
         if (expression != null) {
           expressions.push(expression);
         } else if (index < length) {
-          throw new Error('unexpected "${charAt(index)}"', index);
+          throw new Error('unexpected "${charAt(index)}"', inputString, index);
         }
       }
     }
@@ -68,14 +68,14 @@ class Parser {
       index++;
       var consequent = gobbleExpression();
       if (consequent == null) {
-        throw new Error('expected a "consequent" expression for conditional', index);
+        throw new Error('expected a "consequent" expression for ternary conditional expression', inputString, index);
       }
       gobbleSpaces();
       if (charCodeAt(index) == Chars.COLON_CODE) {
         index++;
         var alternate = gobbleExpression();
         if (alternate == null) {
-          throw new Error('expected an "alternate" expression for conditional', index);
+          throw new Error('expected an "alternate" expression for ternary conditional expression', inputString, index);
         }
         return Conditional(expression, consequent, alternate);
       }
@@ -123,7 +123,7 @@ class Parser {
 
     var right = gobbleToken();
     if (right == null) {
-      throw new Error('expected expression after $binaryOperator', index);
+      throw new Error('expected expression after binary operator: "$binaryOperator"', inputString, index);
     }
 
     // TODO: This code is untyped because of how the original jsepimplementation worked.
@@ -152,7 +152,7 @@ class Parser {
 
       expression = gobbleToken();
       if (expression == null) {
-        throw new Error('expected expression after binary operator: "$binaryOperator"', index);
+        throw new Error('expected expression after binary operator: "$binaryOperator"', inputString, index);
       }
       stack.push(binaryOperatorInfo);
       stack.push(expression);
@@ -226,16 +226,16 @@ class Parser {
       }
 
       if (!Chars.isDecimalDigit(charCodeAt(index - 1))) {
-        throw new Error('expected exponent in numeric literal: "${numberString}${charAt(index)}"', index);
+        throw new Error('expected exponent in numeric literal: "${numberString}${charAt(index)}"', inputString, index);
       }
     }
 
     var charCode = charCodeAt(index);
 
     if (Chars.isIdentifierStart(charCode)) {
-      throw new Error('variable names cannot start with a number: "${numberString}${charAt(index)}"', index);
+      throw new Error('variable names cannot start with a number: "${numberString}${charAt(index)}"', inputString, index);
     } else if (charCode == Chars.PERIOD_CODE) {
-      throw new Error('unexpected period in numeric literal: "${numberString}${charAt(index)}"', index);
+      throw new Error('unexpected period in numeric literal: "${numberString}${charAt(index)}"', inputString, index);
     }
 
     return Literal(Std.parseFloat(numberString));
@@ -267,7 +267,7 @@ class Parser {
     }
 
     if (!closed) {
-      throw new Error('unclosed quote after "$str"', index);
+      throw new Error('unclosed quote after: "$str"', inputString, index);
     }
 
     return Literal(str);
@@ -281,7 +281,7 @@ class Parser {
     if (Chars.isIdentifierStart(charCode)) {
       index++;
     } else {
-      throw new Error('unexpected ${charAt(index)}', index);
+      throw new Error('unexpected ${charAt(index)}', inputString, index);
     }
 
     while (index < length) {
@@ -309,12 +309,14 @@ class Parser {
 
   function gobbleArguments(terminationCharCode : Int) : Array<Expression> {
     var expressions : Array<Expression> = [];
+    var sawTermination = false;
 
     while (index < length) {
       gobbleSpaces();
       var charCode = charCodeAt(index);
 
       if (charCode == terminationCharCode) {
+        sawTermination = true;
         index++;
         break;
       } else if (charCode == Chars.COMMA_CODE) {
@@ -322,10 +324,15 @@ class Parser {
       } else {
         var expression = gobbleExpression();
         if (expression == null || expression.isCompound()) {
-          throw new Error('expected comma', index);
+          throw new Error('expected comma between arguments', inputString, index);
         }
         expressions.push(expression);
       }
+    }
+
+    if (!sawTermination) {
+      var char = String.fromCharCode(terminationCharCode);
+      throw new Error('expected termination character: "$char"', inputString, index);
     }
 
     return expressions;
@@ -350,14 +357,14 @@ class Parser {
 
       if (charCode == Chars.PERIOD_CODE) {
         // TODO: add support for this?
-        throw new Error('member expressions (. access) are not supported', index);
+        throw new Error('member access expressions like "a.b" are not supported', inputString, index);
       } else if (charCode == Chars.OPEN_BRACKET_CODE) {
         // TODO: add support for this?
-        throw new Error('member expressions ([] access) are not supported', index);
+        throw new Error('member access expressions like "a["b"]" are not supported', inputString, index);
       } else if (charCode == Chars.OPEN_PAREN_CODE) {
         var callee = switch expression.toExpressionType() {
           case Identifier(name) : name;
-          case _: throw new Error('expected identifier expression', index);
+          case _: throw new Error('expected function name identifier for function call expression', inputString, index);
         };
         var arguments = gobbleArguments(Chars.CLOSE_PAREN_CODE)
           .map(function(expression) return expression.toExpressionType());
@@ -379,7 +386,7 @@ class Parser {
       index++;
       return expression;
     } else {
-      throw new Error('unclosed (', index);
+      throw new Error('unclosed (', inputString, index);
     }
   }
 
