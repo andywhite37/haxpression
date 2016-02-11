@@ -39,6 +39,38 @@ class TestExpression {
   }
   */
 
+  public function testFromInt() {
+    var expr = Expression.fromInt(123);
+    switch expr.toExpressionType() {
+      case Literal(value) : Assert.isTrue(value.isInt(123));
+      case _ : Assert.fail();
+    };
+  }
+
+  public function testFromFloat() {
+    var expr = Expression.fromFloat(123.12);
+    switch expr.toExpressionType() {
+      case Literal(value) : Assert.isTrue(value.isFloat(123.12));
+      case _ : Assert.fail();
+    };
+  }
+
+  public function testFromBool() {
+    var expr = Expression.fromBool(false);
+    switch expr.toExpressionType() {
+      case Literal(value) : Assert.isTrue(value.isBool(false));
+      case _ : Assert.fail();
+    };
+  }
+
+  public function testFromStringLiteral() {
+    var expr = Expression.fromStringLiteral("hi");
+    switch expr.toExpressionType() {
+      case Literal(value) : Assert.isTrue(value.isString("hi"));
+      case _ : Assert.fail();
+    };
+  }
+
   public function testToString() {
     (Binary("+", Literal(1), Literal(2)) : Expression).toStringSameAs("(1 + 2)");
     (Binary("+", Binary("+", Literal(1), Literal(2)), Literal(3)) : Expression).toStringSameAs("((1 + 2) + 3)");

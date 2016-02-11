@@ -113,10 +113,38 @@ abstract Value(ValueType) {
     };
   }
 
-  public function isNumeric() : Bool {
+  public function isInt(?test : Int) : Bool {
     return switch this {
-      case VFloat(v) : true;
-      case VInt(v) : true;
+      case VInt(v) : test == null || test == v;
+      case _ : false;
+    };
+  }
+
+  public function isFloat(?test : Float) : Bool {
+    return switch this {
+      case VFloat(v) : test == null || test == v;
+      case _ : false;
+    };
+  }
+
+  public function isBool(?test : Bool) : Bool {
+    return switch this {
+      case VBool(v) : test == null || test == v;
+      case _ : false;
+    };
+  }
+
+  public function isString(?test : String) : Bool {
+    return switch this {
+      case VString(v) : test == null || test == v;
+      case _ : false;
+    };
+  }
+
+  public function isNumeric(?test : Float) : Bool {
+    return switch this {
+      case VFloat(v) : test == null || test == v;
+      case VInt(v) : test == null || test == v;
       case _: false;
     };
   }

@@ -29,6 +29,22 @@ abstract Expression(ExpressionType) {
     return Parser.parse(input);
   }
 
+  public static function fromStringLiteral(input : String) : Expression {
+    return Literal(Value.fromString(input));
+  }
+
+  public static function fromInt(input : Int) : Expression {
+    return Literal(Value.fromInt(input));
+  }
+
+  public static function fromFloat(input : Float) : Expression {
+    return Literal(Value.fromFloat(input));
+  }
+
+  public static function fromBool(input : Bool) : Expression {
+    return Literal(Value.fromBool(input));
+  }
+
   public function toString() : String {
     return switch this {
       case Literal(value) : value.toString();
