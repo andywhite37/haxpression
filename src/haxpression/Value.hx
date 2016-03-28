@@ -54,6 +54,14 @@ abstract Value(ValueType) {
       else VString(v);
   }
 
+  public static function na() : Value {
+    return VNA;
+  }
+
+  public static function nm() : Value {
+    return VNM;
+  }
+
   @:to
   public function toFloat() : Float {
     return switch this {
@@ -97,8 +105,8 @@ abstract Value(ValueType) {
       case VInt(v) : Std.string(v);
       case VBool(v) : v ? TRUE_STRING : FALSE_STRING;
       case VString(v) : v;
-      case VNA : NA_STRING;
-      case VNM : NM_STRING;
+      case VNA : NA_STRING.toUpperCase();
+      case VNM : NM_STRING.toUpperCase();
     };
   }
 
