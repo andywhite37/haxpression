@@ -47,7 +47,7 @@ abstract Expression(ExpressionType) {
 
   public function toString() : String {
     return switch this {
-      case Literal(value) : value.toString();
+      case Literal(value) : new Value(value).toString();
       case Identifier(name) : name;
       case Unary(operator, operand): '${operator}${getString(operand)}';
       case Binary(operator, left, right) : '(${getString(left)} $operator ${getString(right)})';
@@ -60,7 +60,7 @@ abstract Expression(ExpressionType) {
 
   public function toDynamic() : Dynamic {
     return switch this {
-      case Literal(value) : value.toDynamic();
+      case Literal(value) : new Value(value).toDynamic();
       case _ : toString();
     };
   }
@@ -69,7 +69,7 @@ abstract Expression(ExpressionType) {
     return switch this {
       case Literal(value) : {
         type: "Literal",
-        value: value.toDynamic() // allow the value to be passed-through with no conversion
+        value: new Value(value).toDynamic() // allow the value to be passed-through with no conversion
       };
       case Identifier(name) : {
         type: "Identifier",
@@ -309,8 +309,11 @@ abstract Expression(ExpressionType) {
   }
 
   public function isLiteral(?value : Value) : Bool {
-    return switch toExpressionType() {
-      case Literal(v) : value != null ? value.toDynamic() == v.toDynamic() : true;
+    return switch [toExpressionType(), value.toValueType()] {
+      case [Literal(VInt(a)), VInt(b)] : a == b;
+      case [Literal(VFloat(a)), VFloat(b)] : a == b;
+      case [Literal(VString(a)), VString(b)] : a == b;
+      case [Literal(VBool(a)), VBool(b)] : a == b;
       case _: false;
     };
   }

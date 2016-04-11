@@ -1,7 +1,7 @@
 package haxpression;
 
 enum ExpressionType {
-  Literal(value : Value);
+  Literal(value : ValueType);
   Identifier(name : String);
   Unary(operator : String, operand : ExpressionType);
   Binary(operator : String, left : ExpressionType, right : ExpressionType);

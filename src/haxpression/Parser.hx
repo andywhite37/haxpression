@@ -238,7 +238,7 @@ class Parser {
       throw new Error('unexpected period in numeric literal: "${numberString}${charAt(index)}"', inputString, index);
     }
 
-    return Literal(Std.parseFloat(numberString));
+    return Literal(VFloat(Std.parseFloat(numberString)));
   }
 
   function gobbleStringLiteral() : Expression {
@@ -270,7 +270,7 @@ class Parser {
       throw new Error('unclosed quote after: "$str"', inputString, index);
     }
 
-    return Literal(str);
+    return Literal(VString(str));
   }
 
   function gobbleIdentifier() : Expression {
@@ -297,8 +297,8 @@ class Parser {
 
     // Special identifiers that are actually values
     return switch identifier.toLowerCase() {
-      case "true" : Literal(true);
-      case "false" : Literal(false);
+      case "true" : Literal(VBool(true));
+      case "false" : Literal(VBool(false));
       case "null" : Literal(VNA);
       case "undefined" : Literal(VNA);
       case "na" : Literal(VNA);

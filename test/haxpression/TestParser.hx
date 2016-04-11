@@ -25,15 +25,15 @@ class TestParser {
 
   public function testBasicNumbers() {
     switch Parser.parse("1").toExpressionType() {
-      case Literal(value) : Assert.same(1, value.toInt());
+      case Literal(VFloat(value)) : Assert.same(1, value);
       case _ : Assert.fail();
     };
     switch Parser.parse("-1").toExpressionType() {
-      case Unary(operator, operand) : Assert.same("-", operator); Assert.same(1, (operand : Expression).evaluate().toFloat());
+      case Unary(operator, Literal(VFloat(operand))) : Assert.same(1, operand);
       case _ : Assert.fail();
     };
     switch Parser.parse("1.23").toExpressionType() {
-      case Literal(value) : Assert.same(1.23, value.toFloat());
+      case Literal(VFloat(value)) : Assert.same(1.23, value);
       case _ : Assert.fail();
     };
     switch Parser.parse("-1.23").toExpressionType() {
