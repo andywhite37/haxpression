@@ -10,23 +10,7 @@ using haxpression.ExpressionTypes;
 using haxpression.Expressions;
 
 abstract Expression(ExpressionType) {
-#if python
-  @:keep
-  public static function parseToObject(s : String) : python.Dict<String, Dynamic>
-    return fromString(s).toPythonObject();
-
-  @:keep
-  public static function parseEval(s : String, dict : python.Dict<String, Dynamic>) {
-    var map = new Map();
-    var o = python.Lib.dictToAnon(dict);
-    for(field in Reflect.fields(o)) {
-      map.set(field, Value.fromDynamic(Reflect.field(o, field)));
-    }
-    return fromString(s).evaluate(map).toDynamic();
-  }
-#end
-
-  inline public function new(expressionType : ExpressionType) {
+  public inline function new(expressionType : ExpressionType) {
     this = expressionType;
   }
 
@@ -123,51 +107,6 @@ abstract Expression(ExpressionType) {
       };
     };
   }
-
-#if python
-  public function toPythonObject() : python.Dict<String, Dynamic> {
-    return python.Lib.anonToDict(switch this {
-      case Literal(value) : {
-        type: "Literal",
-        value: new Value(value).toDynamic() // allow the value to be passed-through with no conversion
-      };
-      case Identifier(name) : {
-        type: "Identifier",
-        name: name
-      };
-      case Unary(operator, operand) : {
-        type: "Unary",
-        operator: operator,
-        operand: (operand : Expression).toPythonObject()
-      };
-      case Binary(operator, left, right) : {
-        type: "Binary",
-        operator: operator,
-        left: (left : Expression).toPythonObject(),
-        right: (right : Expression).toPythonObject()
-      };
-      case Call(callee, arguments): {
-        type: "Call",
-        callee: callee,
-        arguments: arguments.map(function(o : ExpressionType) return (o : Expression).toPythonObject())
-      };
-      case Conditional(test, consequent, alternate): {
-        type: "Conditional",
-        test: (test : Expression).toPythonObject(),
-        consequent: (consequent : Expression).toPythonObject(),
-        alternate: (alternate : Expression).toPythonObject()
-      };
-      case Array(items) : {
-        type: "Array",
-        items: items.map(function(o : ExpressionType) return (o : Expression).toPythonObject())
-      };
-      case Compound(items) : {
-        type: "Compound",
-        items: items.map(function(o : ExpressionType) return (o : Expression).toPythonObject())
-      };
-    });
-  }
-#end
 
   public function hasVariables() : Bool {
     return getVariables().length > 0;
@@ -390,6 +329,16 @@ abstract Expression(ExpressionType) {
     return switch toExpressionType() {
       case Compound(_) : true;
       case _: false;
+    };
+  }
+
+  public function equals(right : Expression) : Bool {
+    return switch [this, right.toExpressionType()] {
+      case [Literal(l), Literal(r)] : l.equals(r);
+      case [Identifier(l), Identifier(r)] : l == r;
+      case [Unary(lop, l), Unary(rop, r)] : lop == rop && l.equals(r);
+      case [Binary(lop, ll, lr), Binary(rop, rl, rr)] : lop == rop && ll.equals(rl) && lr.equals(rr);
+      case [_, _] : false;
     };
   }
 

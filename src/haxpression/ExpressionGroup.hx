@@ -127,9 +127,23 @@ class ExpressionGroup {
     //)});
   }
 
+  public function canExpandExpressionForVariable(variable : String) : Bool {
+    var expression = getExpression(variable);
+    if (expression == null) return false;
+    var variables = expression.getVariables();
+    if (variables.length == 0) return false;
+    for (variable in variables) {
+      if (hasVariable(variable)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public function expandExpressionForVariable(variable : String) : ExpressionGroup {
-    //return time('expandExpressionForVariable $variable', function() {
-      var expression = getExpression(variable);
+    var group = clone();
+    while (group.canExpandExpressionForVariable(variable)) {
+      var expression = group.getExpression(variable);
       var expressionVariables = expression.getVariables();
       expression = expressionVariables.reduce(function(expression : Expression, expressionVariable) {
         if (hasVariable(expressionVariable)) {
@@ -139,8 +153,9 @@ class ExpressionGroup {
         }
         return expression;
       }, expression);
-      return setVariable(variable, expression);
-    //});
+      group = group.setVariable(variable, expression);
+    }
+    return group;
   }
 
   public function canEvaluate() : Bool {

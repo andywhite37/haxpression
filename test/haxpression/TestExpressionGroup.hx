@@ -8,6 +8,53 @@ class TestExpressionGroup {
   public function new() {
   }
 
+  public function vamsiRequest() {
+    var expressionGroup = new ExpressionGroup([
+      'ratios_ebitda_margin' => 'asn_ebitda / asn_sales',
+      'ratios_ni_margin' => 'asn_ni / asn_sales',
+      'asn_ebitda' => 'fs_ebitda',
+      'asn_ni' => 'fs_ni',
+      'asn_sales' => 'fs_sales',
+      'fs_ebitda' => 'iq_ebitda',
+      'fs_ni' => 'iq_ni',
+      'fs_sales' => 'iq_sales',
+    ]);
+    var request = ['ratios_ebitda_margin'];
+
+    var responseMap : Map<String, Expression> = [
+      'fs_ni' => ("iq_ni" : Expression),
+    ];
+
+    var request : {
+      mappings: Map<String, Array<String>>,
+      requestedFields: Array<String>
+    } = {
+      mappings: new Map(),
+      requestedFields: []
+    };
+
+    var response = {
+      responseMap: responseMap,
+      externalVariables: ['iq_ni'],
+      sortedComputedVariables: ['fs_ni', 'fs_sales'],
+    };
+
+    trace('orig');
+    trace(expressionGroup);
+
+    //expressionGroup = expressionGroup.expandExpressionForVariable('asn_sales');
+    //trace(expressionGroup);
+
+    trace('expand ratios_ebitda_margin');
+    expressionGroup = expressionGroup.expandExpressionForVariable('ratios_ebitda_margin');
+    trace(expressionGroup);
+
+    //expressionGroup = expressionGroup.expand();
+    //trace(expressionGroup);
+
+    trace('end vamsi');
+  }
+
   public function testEvaluate() {
     var expressionGroup = new ExpressionGroup([
       'MAP_1' => '2 * SOURCE_1 + 3 * SOURCE_2',
@@ -99,6 +146,32 @@ class TestExpressionGroup {
     group = group.expand();
     //trace(group);
     Assert.pass();
+  }
+
+  public function testExpandExpressionForVariable() {
+    var group = new ExpressionGroup([
+      "a" => "b + c",
+      "b" => "c + d",
+      "c" => "e"
+    ]);
+    group = group.expandExpressionForVariable("a");
+    Assert.same("((e + d) + e)", group.getExpression("a").toString());
+  }
+
+  public function testExpandExpressionForVariable2() {
+    var group = new ExpressionGroup([
+      'ratios_ebitda_margin' => 'asn_ebitda / asn_sales',
+      'ratios_ni_margin' => 'asn_ni / asn_sales',
+      'asn_ebitda' => 'fs_ebitda',
+      'asn_ni' => 'fs_ni',
+      'asn_sales' => 'fs_sales',
+      'fs_ebitda' => 'iq_ebitda',
+      'fs_sales' => 'iq_sales',
+      'fs_ni' => 'iq_ni',
+    ]);
+
+    group = group.expandExpressionForVariable("ratios_ebitda_margin");
+    Assert.same('(iq_ebitda / iq_sales)', group.getExpression("ratios_ebitda_margin").toString());
   }
 
   public function testValidate() {
