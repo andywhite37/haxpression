@@ -12,8 +12,23 @@ abstract Value(ValueType) {
   static var TRUE_STRING(default, never) = "true";
   static var FALSE_STRING(default, never) = "false";
 
-  public function new(valueType : ValueType) {
+  inline public function new(valueType : ValueType) {
     this = valueType;
+  }
+
+  public static function fromDynamic(value : Dynamic) : Value {
+    if(value == null)
+      return VNA;
+    else if(Std.is(value, Int))
+      return fromInt(value);
+    else if(Std.is(value, Float))
+      return fromFloat(value);
+    else if(Std.is(value, Bool))
+      return fromBool(value);
+    else if(Std.is(value, String))
+      return fromString(value);
+    else
+      return throw 'invalid type for $value';
   }
 
   @:from
@@ -116,8 +131,8 @@ abstract Value(ValueType) {
       case VInt(v) : v;
       case VBool(v) : v;
       case VString(v) : v;
-      case VNA : null;
-      case VNM : null;
+      case VNA : "NA";
+      case VNM : "NM";
     };
   }
 
