@@ -34,7 +34,7 @@ class Parser {
         if (expression != null) {
           expressions.push(expression);
         } else if (index < length) {
-          throw new Error('unexpected "${charAt(index)}"', inputString, index);
+          throw new Error('unexpected internal parse "${charAt(index)}"', inputString, index);
         }
       }
     }
@@ -56,7 +56,7 @@ class Parser {
 
   function gobbleSpaces() : Void {
     var charCode = charCodeAt(index);
-    while (Chars.isWhiteSpace(charCode)) {
+    while (index < length && Chars.isWhiteSpace(charCode)) {
       charCode = charCodeAt(++index);
     }
   }
@@ -108,19 +108,15 @@ class Parser {
     var binaryOperatorInfo : { operator : String, precedence : Int };
     var left : Expression;
     var right : Expression;
-
     var left = gobbleToken();
     var binaryOperator = gobbleBinaryOperator();
-
     if (binaryOperator == null) {
       return left;
     }
-
     binaryOperatorInfo = {
       operator: binaryOperator,
       precedence: BinaryOperations.getOperatorPrecedence(binaryOperator)
     };
-
     var right = gobbleToken();
     if (right == null) {
       throw new Error('expected expression after binary operator: "$binaryOperator"', inputString, index);
@@ -173,6 +169,7 @@ class Parser {
 
     var charCode = charCodeAt(index);
 
+
     if (Chars.isDecimalDigit(charCode) || charCode == Chars.PERIOD_CODE) {
       return gobbleNumericLiteral();
     } else if (charCode == Chars.SINGLE_QUOTE_CODE || charCode == Chars.DOUBLE_QUOTE_CODE) {
@@ -200,14 +197,14 @@ class Parser {
 
   function gobbleNumericLiteral() : Expression {
     var numberString = "";
-    while (Chars.isDecimalDigit(charCodeAt(index))) {
+    while (index < length && Chars.isDecimalDigit(charCodeAt(index))) {
       numberString += charAt(index++);
     }
 
     if (charCodeAt(index) == Chars.PERIOD_CODE) {
       numberString += charAt(index++);
 
-      while (Chars.isDecimalDigit(charCodeAt(index))) {
+      while (index < length && Chars.isDecimalDigit(charCodeAt(index))) {
         numberString += charAt(index++);
       }
     }
@@ -221,7 +218,7 @@ class Parser {
         numberString += charAt(index++);
       }
 
-      while (Chars.isDecimalDigit(charCodeAt(index))) {
+      while (index < length && Chars.isDecimalDigit(charCodeAt(index))) {
         numberString += charAt(index++);
       }
 
@@ -230,13 +227,18 @@ class Parser {
       }
     }
 
+    if(index >= length)
+      return Literal(VFloat(Std.parseFloat(numberString)));
+
     var charCode = charCodeAt(index);
+
 
     if (Chars.isIdentifierStart(charCode)) {
       throw new Error('variable names cannot start with a number: "${numberString}${charAt(index)}"', inputString, index);
     } else if (charCode == Chars.PERIOD_CODE) {
       throw new Error('unexpected period in numeric literal: "${numberString}${charAt(index)}"', inputString, index);
     }
+
 
     return Literal(VFloat(Std.parseFloat(numberString)));
   }
@@ -350,28 +352,30 @@ class Parser {
 
     gobbleSpaces();
 
-    charCode = charCodeAt(index);
-
-    while (charCode == Chars.PERIOD_CODE || charCode == Chars.OPEN_BRACKET_CODE || charCode == Chars.OPEN_PAREN_CODE) {
-      index++;
-
-      if (charCode == Chars.PERIOD_CODE) {
-        // TODO: add support for this?
-        throw new Error('member access expressions like "a.b" are not supported', inputString, index);
-      } else if (charCode == Chars.OPEN_BRACKET_CODE) {
-        // TODO: add support for this?
-        throw new Error('member access expressions like "a["b"]" are not supported', inputString, index);
-      } else if (charCode == Chars.OPEN_PAREN_CODE) {
-        var callee = switch expression.toExpressionType() {
-          case Identifier(name) : name;
-          case _: throw new Error('expected function name identifier for function call expression', inputString, index);
-        };
-        var arguments = gobbleArguments(Chars.CLOSE_PAREN_CODE)
-          .map(function(expression) return expression.toExpressionType());
-        expression = Call(callee, arguments);
-      }
-      gobbleSpaces();
+    if(index < length) {
       charCode = charCodeAt(index);
+
+      while (index < length && (charCode == Chars.PERIOD_CODE || charCode == Chars.OPEN_BRACKET_CODE || charCode == Chars.OPEN_PAREN_CODE)) {
+        index++;
+
+        if (charCode == Chars.PERIOD_CODE) {
+          // TODO: add support for this?
+          throw new Error('member access expressions like "a.b" are not supported', inputString, index);
+        } else if (charCode == Chars.OPEN_BRACKET_CODE) {
+          // TODO: add support for this?
+          throw new Error('member access expressions like "a["b"]" are not supported', inputString, index);
+        } else if (charCode == Chars.OPEN_PAREN_CODE) {
+          var callee = switch expression.toExpressionType() {
+            case Identifier(name) : name;
+            case _: throw new Error('expected function name identifier for function call expression', inputString, index);
+          };
+          var arguments = gobbleArguments(Chars.CLOSE_PAREN_CODE)
+          .map(function(expression) return expression.toExpressionType());
+          expression = Call(callee, arguments);
+        }
+        gobbleSpaces();
+        charCode = charCodeAt(index);
+      }
     }
 
     return expression;
