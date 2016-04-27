@@ -14,8 +14,6 @@ mappings = {
     "fs_sales": ["iq_sales"]
 }
 
-#print(mappings)
-
 def printEvaluationInfo(fields):
     print('--------------------------------------------------------------------------------')
     print('requesting fields: ', fields)
@@ -32,27 +30,3 @@ printEvaluationInfo(["fs_sales", "fs_ni"])
 printEvaluationInfo(["fs_sales"])
 printEvaluationInfo(["iq_sales", "iq_ni"])
 printEvaluationInfo(["iq_sales"])
-
-
-# fields = ["ratios_ebitda_margin", "ratios_ni_margin"]
-
-# fields = ["asn_ebitda"]
-# info = Expr.getEvaluationInfo(mappings, fields)
-# print('--------------------------------------------------------------------------------')
-# print('requesting fields: ', fields)
-# print('--------------------------------------------------------------------------------')
-# print(json.dumps(info, indent=2))
-
-# fields = ["fs_sales"]
-# info = Expr.getEvaluationInfo(mappings, fields)
-# print('--------------------------------------------------------------------------------')
-# print('requesting fields: ', fields)
-# print('--------------------------------------------------------------------------------')
-# print(json.dumps(info, indent=2))
-
-# fields = ["iq_sales"]
-# info = Expr.getEvaluationInfo(mappings, fields)
-# print('--------------------------------------------------------------------------------')
-# print('requesting fields: ', fields)
-# print('--------------------------------------------------------------------------------')
-# print(json.dumps(info, indent=2))
