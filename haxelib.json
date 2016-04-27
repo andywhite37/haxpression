@@ -9,7 +9,7 @@
   "releasenote": "Add 'E' prefix for ExpressionType constructors to avoid name conflicts.  Add python and java builds (java not currently compiling).",
   "contributors": ["andywhite37"],
   "dependencies": {
-    "utest": ""
+    "utest": "",
     "graphx": ""
   }
 }
