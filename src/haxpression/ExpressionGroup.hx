@@ -16,6 +16,17 @@ class ExpressionGroup {
     this.variableMap = variableMap != null ? variableMap : new Map();
   }
 
+  public static function fromFallbackMap(map : Map<String, Array<ExpressionOrValue>>) : ExpressionGroup {
+    var newMap = map.mapValues(function(fieldId, expressions) : ExpressionOrValue {
+      if (expressions.length == 1) return expressions[0];
+      var args = expressions.map(function(expressionOrValue) {
+        return expressionOrValue.toExpression().toString();
+      }).join(",");
+      return 'COALESCE($args)';
+    }, new Map());
+    return new ExpressionGroup(newMap);
+  }
+
   public function clone() : ExpressionGroup {
     if (!Config.useCloneForExpressionGroups) {
       return this;
@@ -48,6 +59,35 @@ class ExpressionGroup {
     variables.sort(Strings.icompare);
     return variables;
   }
+
+  public function getExternalVariables() : Array<String> {
+    return getVariables(true).reduce(function(acc : Array<String>, variable) {
+      if (!hasVariable(variable)) {
+        acc.push(variable);
+      }
+      return acc;
+    }, []);
+  }
+
+  /*
+  public function getDependencyVariables(variable : String) : Array<String> {
+    function accDependencyVariables(acc : Array<String>, variable : String) : Array<String> {
+      if (!hasVariable(variable)) {
+        return acc;
+      }
+      var expression = getExpression(variable);
+      var expressionVariables = expression.getVariables();
+      for (expressionVariable in expressionVariables) {
+        if (!acc.contains(expressionVariable)) {
+          acc.push(expressionVariable);
+          acc = accDependencyVariables(acc, expressionVariable);
+        }
+      }
+      return acc;
+    }
+    return accDependencyVariables([], variable);
+  }
+  */
 
   public function getExpressionOrValue(variable : String) : ExpressionOrValue {
     if (!hasVariable(variable)) {
@@ -116,15 +156,13 @@ class ExpressionGroup {
   }
 
   public function expand() : ExpressionGroup {
-    //return time('expand', function() {
-      return getDependencySortedVariables().reduce(function(expressionGroup : ExpressionGroup, topLevelVariable) {
-        if (expressionGroup.hasVariable(topLevelVariable)) {
-          var expression = expressionGroup.getExpression(topLevelVariable);
-          return expressionGroup.expandExpressionForVariable(topLevelVariable);
-        }
-        return expressionGroup;
-      }, this);
-    //)});
+    return getDependencySortedVariables().reduce(function(expressionGroup : ExpressionGroup, topLevelVariable) {
+      if (expressionGroup.hasVariable(topLevelVariable)) {
+        var expression = expressionGroup.getExpression(topLevelVariable);
+        return expressionGroup.expandExpressionForVariable(topLevelVariable);
+      }
+      return expressionGroup;
+    }, this);
   }
 
   public function canExpandExpressionForVariable(variable : String) : Bool {
@@ -227,32 +265,65 @@ class ExpressionGroup {
     return acc;
   }
 
-  public function getVariableDependencyGraph() : Graph<String> {
-    //return time('getVariableDependencyGraph', function() {
-      return getVariables().reduce(function(graph : Graph<String>, variable) {
-        var expression = getExpression(variable);
-        var expressionVariables = expression.getVariables();
-        return expressionVariables.length > 0 ?
-          graph.addEdgesTo(variable, NodeOrValue.mapValues(expressionVariables)) :
-          graph;
-      }, new StringGraph());
-    //});
+  public function getVariableDependencyGraph(?forVariables : Array<String>) : Graph<String> {
+    if (forVariables == null) forVariables = getVariables();
+    function accVariableDependencyGraph(graph : Graph<String>, variable) {
+      if (!hasVariable(variable)) {
+        return graph;
+      }
+      var expression = getExpression(variable);
+      //trace(expression.toString());
+      var expressionVariables = expression.getVariables();
+      if (expressionVariables.length > 0) {
+        graph.addEdgesTo(variable, NodeOrValue.mapValues(expressionVariables));
+        for (expressionVariable in expressionVariables) {
+          graph = accVariableDependencyGraph(graph, expressionVariable);
+        }
+      }
+      return graph;
+    }
+    return forVariables.reduce(function(graph : Graph<String>, variable) {
+      return accVariableDependencyGraph(graph, variable);
+    }, new StringGraph());
   }
 
-  public function getDependencySortedVariables() : Array<String> {
-    //return time('getDependencySortedVariables', function() {
-      return getVariableDependencyGraph().topologicalSort();
-    //});
+  public function getDependencySortedVariables(?forVariables : Array<String>) : Array<String> {
+    return getVariableDependencyGraph(forVariables).topologicalSort();
   }
 
-  /*
-  public function time<T>(description : String, callback : Void -> T) : T {
-    var startTime = Date.now().getTime();
-    var result = callback();
-    var endTime = Date.now().getTime();
-    var durationMillis = endTime - startTime;
-    trace('$description took $durationMillis ms');
+  public function getEvaluationInfo(?forVariables : Array<String>) : EvaluationInfo {
+    var group = this.clone();
+
+    if (forVariables == null) forVariables = group.getVariables(false);
+
+    var result : EvaluationInfo = {
+      expressions: new Map(),
+      externalVariables: [],
+      sortedComputedVariables: [],
+    };
+
+    result.sortedComputedVariables = group.getDependencySortedVariables(forVariables);
+    //group = group.expand();
+    result.externalVariables = group.getExternalVariables();
+
+    // remove external variables from the sorted computed variables
+    result.sortedComputedVariables = result.sortedComputedVariables.filter(function(variable) {
+      return !result.externalVariables.contains(variable);
+    });
+
+    //group = group.expand();
+
+    // get the AST for each computed variable
+    for (computedVariable in result.sortedComputedVariables) {
+      result.expressions.set(computedVariable, group.getExpression(computedVariable));
+    }
+
     return result;
   }
-  */
 }
+
+typedef EvaluationInfo = {
+  expressions:  Map<String, Expression>,
+  externalVariables: Array<String>,
+  sortedComputedVariables: Array<String>
+};

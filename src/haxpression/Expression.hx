@@ -332,15 +332,18 @@ abstract Expression(ExpressionType) {
     };
   }
 
+  /*
   public function equals(right : Expression) : Bool {
     return switch [this, right.toExpressionType()] {
       case [Literal(l), Literal(r)] : l.equals(r);
       case [Identifier(l), Identifier(r)] : l == r;
       case [Unary(lop, l), Unary(rop, r)] : lop == rop && l.equals(r);
       case [Binary(lop, ll, lr), Binary(rop, rl, rr)] : lop == rop && ll.equals(rl) && lr.equals(rr);
-      case [_, _] : false;
+      case [Call(lc, ls), Call(rc, rs)] : lc == rc && ls.length == rs.length && ls.length.range
+      //case [_, _] : false;
     };
   }
+  */
 
   function accumulateVariables(variables : Array<String>) : Void {
     switch this {

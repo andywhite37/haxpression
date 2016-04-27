@@ -3,56 +3,29 @@ package haxpression;
 import utest.Assert;
 using haxpression.utils.StringValueMaps;
 using haxpression.utils.Arrays;
+using haxpression.utils.Iterators;
 
 class TestExpressionGroup {
   public function new() {
   }
 
-  public function vamsiRequest() {
-    var expressionGroup = new ExpressionGroup([
-      'ratios_ebitda_margin' => 'asn_ebitda / asn_sales',
-      'ratios_ni_margin' => 'asn_ni / asn_sales',
-      'asn_ebitda' => 'fs_ebitda',
-      'asn_ni' => 'fs_ni',
-      'asn_sales' => 'fs_sales',
-      'fs_ebitda' => 'iq_ebitda',
-      'fs_ni' => 'iq_ni',
-      'fs_sales' => 'iq_sales',
+  public function testGetVariables() {
+    var group = new ExpressionGroup([
+      "a" => "b + c",
+      "b" => "d + e",
+      "c" => "f",
+      "x" => "y + z"
     ]);
-    var request = ['ratios_ebitda_margin'];
+    Assert.same(["a", "b", "c", "x"], group.getVariables(false));
+    Assert.same(["a", "b", "c", "d", "e", "f", "x", "y", "z"], group.getVariables(true));
+    Assert.same(["d", "e", "f", "y", "z"], group.getExternalVariables());
 
-    var responseMap : Map<String, Expression> = [
-      'fs_ni' => ("iq_ni" : Expression),
-    ];
-
-    var request : {
-      mappings: Map<String, Array<String>>,
-      requestedFields: Array<String>
-    } = {
-      mappings: new Map(),
-      requestedFields: []
-    };
-
-    var response = {
-      responseMap: responseMap,
-      externalVariables: ['iq_ni'],
-      sortedComputedVariables: ['fs_ni', 'fs_sales'],
-    };
-
-    trace('orig');
-    trace(expressionGroup);
-
-    //expressionGroup = expressionGroup.expandExpressionForVariable('asn_sales');
-    //trace(expressionGroup);
-
-    trace('expand ratios_ebitda_margin');
-    expressionGroup = expressionGroup.expandExpressionForVariable('ratios_ebitda_margin');
-    trace(expressionGroup);
-
-    //expressionGroup = expressionGroup.expand();
-    //trace(expressionGroup);
-
-    trace('end vamsi');
+    Assert.same(["z", "y", "x", "f", "e", "d", "c", "b", "a"], group.getDependencySortedVariables());
+    Assert.same(["f", "e", "d", "c", "b", "a"], group.getDependencySortedVariables(["a"]));
+    Assert.same(["e", "d", "b"], group.getDependencySortedVariables(["b"]));
+    Assert.same(["f", "c"], group.getDependencySortedVariables(["c"]));
+    Assert.same(["f", "c", "e", "d", "b"], group.getDependencySortedVariables(["b", "c"]));
+    Assert.same(["z", "y", "x"], group.getDependencySortedVariables(["x"]));
   }
 
   public function testEvaluate() {
@@ -142,9 +115,7 @@ class TestExpressionGroup {
   public function testExpand3() {
     var expressions = getProcessedFinancialExpressions();
     var group = new ExpressionGroup(expressions);
-    //trace(group);
     group = group.expand();
-    //trace(group);
     Assert.pass();
   }
 
@@ -178,6 +149,53 @@ class TestExpressionGroup {
     // TODO: check for cycles
     Assert.pass();
   }
+
+  public function testFromFallbackMap() {
+    var group = ExpressionGroup.fromFallbackMap([
+      "a" => ["b + c", "d + e"],
+      "b" => ["c + d"]
+    ]);
+    Assert.isTrue(group.hasVariable("a"));
+    Assert.isTrue(group.hasVariable("b"));
+    Assert.same("COALESCE((b + c), (d + e))", group.getExpression("a").toString());
+    Assert.same("(c + d)", group.getExpression("b").toString());
+  }
+
+  public function testGetEvaluationInfo() {
+    var group = new ExpressionGroup([
+      'ratios_ebitda_margin' => 'asn_ebitda / asn_sales',
+      'ratios_ni_margin' => 'asn_ni / asn_sales',
+      'asn_ebitda' => 'fs_ebitda',
+      'asn_ni' => 'fs_ni',
+      'asn_sales' => 'fs_sales',
+      'fs_ebitda' => 'iq_ebitda',
+      'fs_ni' => 'iq_ni',
+      'fs_sales' => 'iq_sales',
+    ]);
+    var info = group.getEvaluationInfo(["ratios_ebitda_margin", "ratios_ni_margin"]);
+    Assert.same(8, info.expressions.keys().toArray().length);
+    Assert.same({ type: "Identifier", name: "iq_ni" }, info.expressions.get("fs_ni").toObject());
+    Assert.same({ type: "Identifier", name: "fs_ni" }, info.expressions.get("asn_ni").toObject());
+    Assert.same({ type: "Identifier", name: "iq_sales" }, info.expressions.get("fs_sales").toObject());
+    Assert.same({ type: "Identifier", name: "iq_ebitda" }, info.expressions.get("fs_ebitda").toObject());
+    Assert.same({ type: "Identifier", name: "fs_sales" }, info.expressions.get("asn_sales").toObject());
+    Assert.same({
+      type: "Binary",
+      operator: "/",
+      left: { type: "Identifier", name: "asn_ni" },
+      right: { type: "Identifier", name: "asn_sales" }
+    }, info.expressions.get("ratios_ni_margin").toObject());
+    Assert.same({ type: "Identifier", name: "fs_ebitda" }, info.expressions.get("asn_ebitda").toObject());
+    Assert.same({
+      type: "Binary",
+      operator: "/",
+      left: { type: "Identifier", name: "asn_ebitda" },
+      right: { type: "Identifier", name: "asn_sales" }
+    }, info.expressions.get("ratios_ebitda_margin").toObject());
+    Assert.same(["iq_ebitda", "iq_ni", "iq_sales"], info.externalVariables);
+    Assert.same(["fs_ni", "asn_ni", "fs_sales", "fs_ebitda", "asn_sales", "ratios_ni_margin", "asn_ebitda", "ratios_ebitda_margin"], info.sortedComputedVariables);
+  }
+
 
   function getProcessedFinancialExpressions() : Map<String, ExpressionOrValue> {
     var data = getFinancialExpressions();

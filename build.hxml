@@ -11,5 +11,5 @@
 
 --next
 
--python bin/python_exports.py
+-python python_exports.py
 haxpression.PythonExports
