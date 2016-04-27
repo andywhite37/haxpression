@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from haxpression import haxpression_PythonExports as Expr
+from haxpression import haxpression_python_PythonExports as Expr
 import json
 
 mappings = {
