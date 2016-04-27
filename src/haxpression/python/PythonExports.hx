@@ -1,4 +1,4 @@
-package haxpression;
+package haxpression.python;
 
 import python.Dict;
 using Lambda;
@@ -63,41 +63,41 @@ class PythonExports {
   @:keep
   public static function expressionToDict(expression : Expression) : python.Dict<String, Dynamic> {
     return python.Lib.anonToDict(switch expression.toExpressionType() {
-      case Literal(value) : {
+      case ELiteral(value) : {
         type: "Literal",
         value: new Value(value).toDynamic() // allow the value to be passed-through with no conversion
       };
-      case Identifier(name) : {
+      case EIdentifier(name) : {
         type: "Identifier",
         name: name
       };
-      case Unary(operator, operand) : {
+      case EUnary(operator, operand) : {
         type: "Unary",
         operator: operator,
         operand: expressionToDict(operand),
       };
-      case Binary(operator, left, right) : {
+      case EBinary(operator, left, right) : {
         type: "Binary",
         operator: operator,
         left: expressionToDict(left),
         right: expressionToDict(right)
       };
-      case Call(callee, arguments): {
+      case ECall(callee, arguments): {
         type: "Call",
         callee: callee,
         arguments: arguments.map(function(arg) return expressionToDict(Expression.fromExpressionType(arg)))
       };
-      case Conditional(test, consequent, alternate): {
+      case EConditional(test, consequent, alternate): {
         type: "Conditional",
         test: expressionToDict(test),
         consequent: expressionToDict(consequent),
         alternate: expressionToDict(alternate)
       };
-      case Array(items) : {
+      case EArray(items) : {
         type: "Array",
         items: items.map(function(item) return expressionToDict(Expression.fromExpressionType(item)))
       };
-      case Compound(items) : {
+      case ECompound(items) : {
         type: "Compound",
         items: items.map(function(item) return expressionToDict(Expression.fromExpressionType(item)))
       };

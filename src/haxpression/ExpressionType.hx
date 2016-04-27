@@ -1,12 +1,12 @@
 package haxpression;
 
 enum ExpressionType {
-  Literal(value : ValueType);
-  Identifier(name : String);
-  Unary(operator : String, operand : ExpressionType);
-  Binary(operator : String, left : ExpressionType, right : ExpressionType);
-  Call(callee : String, arguments : Array<ExpressionType>);
-  Conditional(test : ExpressionType, consequent : ExpressionType, alternate : ExpressionType);
-  Array(items : Array<ExpressionType>);
-  Compound(items : Array<ExpressionType>);
+  ELiteral(value : ValueType);
+  EIdentifier(name : String);
+  EUnary(operator : String, operand : ExpressionType);
+  EBinary(operator : String, left : ExpressionType, right : ExpressionType);
+  ECall(callee : String, arguments : Array<ExpressionType>);
+  EConditional(test : ExpressionType, consequent : ExpressionType, alternate : ExpressionType);
+  EArray(items : Array<ExpressionType>);
+  ECompound(items : Array<ExpressionType>);
 }

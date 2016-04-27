@@ -1512,19 +1512,19 @@ class haxpression__Expression_Expression_Impl_:
 
     @staticmethod
     def fromStringLiteral(input):
-        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression__Value_Value_Impl_.toValueType(haxpression__Value_Value_Impl_.fromString(input))))
+        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression__Value_Value_Impl_.toValueType(haxpression__Value_Value_Impl_.fromString(input))))
 
     @staticmethod
     def fromInt(input):
-        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression__Value_Value_Impl_.toValueType(haxpression__Value_Value_Impl_.fromInt(input))))
+        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression__Value_Value_Impl_.toValueType(haxpression__Value_Value_Impl_.fromInt(input))))
 
     @staticmethod
     def fromFloat(input):
-        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression__Value_Value_Impl_.toValueType(haxpression__Value_Value_Impl_.fromFloat(input))))
+        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression__Value_Value_Impl_.toValueType(haxpression__Value_Value_Impl_.fromFloat(input))))
 
     @staticmethod
     def fromBool(input):
-        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression__Value_Value_Impl_.toValueType(haxpression__Value_Value_Impl_.fromBool(input))))
+        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression__Value_Value_Impl_.toValueType(haxpression__Value_Value_Impl_.fromBool(input))))
 
     @staticmethod
     def toString(this1):
@@ -1637,77 +1637,77 @@ class haxpression__Expression_Expression_Impl_:
         if (not haxpression_Config.useCloneForExpressions):
             return haxpression__Expression_Expression_Impl_.fromExpressionType(this1)
         if ((this1.index) == 0):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(this1.params[0]))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(this1.params[0]))
         elif ((this1.index) == 1):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Identifier(this1.params[0]))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EIdentifier(this1.params[0]))
         elif ((this1.index) == 2):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Unary(this1.params[0],haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1])))))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EUnary(this1.params[0],haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1])))))
         elif ((this1.index) == 3):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Binary(this1.params[0],haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1]))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[2])))))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EBinary(this1.params[0],haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1]))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[2])))))
         elif ((this1.index) == 4):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Call(this1.params[0],haxpression_ExpressionTypes.clone(this1.params[1])))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ECall(this1.params[0],haxpression_ExpressionTypes.clone(this1.params[1])))
         elif ((this1.index) == 5):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Conditional(haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[0]))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1]))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[2])))))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EConditional(haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[0]))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1]))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.clone(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[2])))))
         elif ((this1.index) == 6):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Array(haxpression_ExpressionTypes.clone(this1.params[0])))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EArray(haxpression_ExpressionTypes.clone(this1.params[0])))
         elif ((this1.index) == 7):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Compound(haxpression_ExpressionTypes.clone(this1.params[0])))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ECompound(haxpression_ExpressionTypes.clone(this1.params[0])))
         else:
             pass
 
     @staticmethod
     def substitute(this1,variables):
         if ((this1.index) == 0):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(this1.params[0]))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(this1.params[0]))
         elif ((this1.index) == 1):
             name = this1.params[0]
             if name in variables.h:
                 return haxpression__ExpressionOrValue_ExpressionOrValue_Impl_.toExpression(variables.h.get(name,None))
             else:
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Identifier(name))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EIdentifier(name))
         elif ((this1.index) == 2):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Unary(this1.params[0],haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1]),variables))))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EUnary(this1.params[0],haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1]),variables))))
         elif ((this1.index) == 3):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Binary(this1.params[0],haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1]),variables)),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[2]),variables))))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EBinary(this1.params[0],haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1]),variables)),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[2]),variables))))
         elif ((this1.index) == 4):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Call(this1.params[0],haxpression_ExpressionTypes.substitute(this1.params[1],variables)))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ECall(this1.params[0],haxpression_ExpressionTypes.substitute(this1.params[1],variables)))
         elif ((this1.index) == 5):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Conditional(haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[0]),variables)),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1]),variables)),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[2]),variables))))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EConditional(haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[0]),variables)),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[1]),variables)),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.substitute(haxpression__Expression_Expression_Impl_.fromExpressionType(this1.params[2]),variables))))
         elif ((this1.index) == 6):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Array(haxpression_ExpressionTypes.substitute(this1.params[0],variables)))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EArray(haxpression_ExpressionTypes.substitute(this1.params[0],variables)))
         elif ((this1.index) == 7):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Array(haxpression_ExpressionTypes.substitute(this1.params[0],variables)))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EArray(haxpression_ExpressionTypes.substitute(this1.params[0],variables)))
         else:
             pass
 
     @staticmethod
     def simplify(this1):
         if ((this1.index) == 0):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(this1.params[0]))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(this1.params[0]))
         elif ((this1.index) == 1):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Identifier(this1.params[0]))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EIdentifier(this1.params[0]))
         elif ((this1.index) == 2):
             operand = this1.params[1]
             operator = this1.params[0]
             if haxpression__Expression_Expression_Impl_.canEvaluate(haxpression__Expression_Expression_Impl_.fromExpressionType(operand)):
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression__Value_Value_Impl_.toValueType(haxpression_UnaryOperations.evaluate(operator,haxpression__Expression_Expression_Impl_.evaluate(haxpression__Expression_Expression_Impl_.fromExpressionType(operand))))))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression__Value_Value_Impl_.toValueType(haxpression_UnaryOperations.evaluate(operator,haxpression__Expression_Expression_Impl_.evaluate(haxpression__Expression_Expression_Impl_.fromExpressionType(operand))))))
             else:
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Unary(operator,haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(operand)))))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EUnary(operator,haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(operand)))))
         elif ((this1.index) == 3):
             right = this1.params[2]
             left = this1.params[1]
             operator1 = this1.params[0]
             if (haxpression__Expression_Expression_Impl_.canEvaluate(haxpression__Expression_Expression_Impl_.fromExpressionType(left)) and haxpression__Expression_Expression_Impl_.canEvaluate(haxpression__Expression_Expression_Impl_.fromExpressionType(right))):
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression__Value_Value_Impl_.toValueType(haxpression_BinaryOperations.evaluate(operator1,haxpression__Expression_Expression_Impl_.evaluate(haxpression__Expression_Expression_Impl_.fromExpressionType(left)),haxpression__Expression_Expression_Impl_.evaluate(haxpression__Expression_Expression_Impl_.fromExpressionType(right))))))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression__Value_Value_Impl_.toValueType(haxpression_BinaryOperations.evaluate(operator1,haxpression__Expression_Expression_Impl_.evaluate(haxpression__Expression_Expression_Impl_.fromExpressionType(left)),haxpression__Expression_Expression_Impl_.evaluate(haxpression__Expression_Expression_Impl_.fromExpressionType(right))))))
             else:
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Binary(operator1,haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(left))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(right)))))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EBinary(operator1,haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(left))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(right)))))
         elif ((this1.index) == 4):
             arguments = this1.params[1]
             callee = this1.params[0]
             if haxpression_ExpressionTypes.canEvaluateAll(arguments):
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression__Value_Value_Impl_.toValueType(haxpression_CallOperations.evaluate(callee,haxpression_ExpressionTypes.evaluate(arguments)))))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression__Value_Value_Impl_.toValueType(haxpression_CallOperations.evaluate(callee,haxpression_ExpressionTypes.evaluate(arguments)))))
             else:
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Call(callee,haxpression_ExpressionTypes.simplify(arguments)))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ECall(callee,haxpression_ExpressionTypes.simplify(arguments)))
         elif ((this1.index) == 5):
             alternate = this1.params[2]
             consequent = this1.params[1]
@@ -1718,11 +1718,11 @@ class haxpression__Expression_Expression_Impl_:
                 else:
                     return haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(alternate))
             else:
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Conditional(haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(test))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(consequent))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(alternate)))))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EConditional(haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(test))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(consequent))),haxpression__Expression_Expression_Impl_.toExpressionType(haxpression__Expression_Expression_Impl_.simplify(haxpression__Expression_Expression_Impl_.fromExpressionType(alternate)))))
         elif ((this1.index) == 6):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Array(haxpression_ExpressionTypes.simplify(this1.params[0])))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EArray(haxpression_ExpressionTypes.simplify(this1.params[0])))
         elif ((this1.index) == 7):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Compound(haxpression_ExpressionTypes.simplify(this1.params[0])))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ECompound(haxpression_ExpressionTypes.simplify(this1.params[0])))
         else:
             pass
 
@@ -2251,7 +2251,7 @@ class haxpression__ExpressionOrValue_ExpressionOrValue_Impl_:
         if ((this1.index) == 0):
             return this1.params[0]
         elif ((this1.index) == 1):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression__Value_Value_Impl_.toValueType(this1.params[0])))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression__Value_Value_Impl_.toValueType(this1.params[0])))
         else:
             pass
 
@@ -2277,39 +2277,39 @@ haxpression__ExpressionOrValue_ExpressionOrValue_Impl_._hx_class = haxpression__
 class haxpression_ExpressionType(Enum):
     __slots__ = ()
     _hx_class_name = "haxpression.ExpressionType"
-    _hx_constructs = ["Literal", "Identifier", "Unary", "Binary", "Call", "Conditional", "Array", "Compound"]
+    _hx_constructs = ["ELiteral", "EIdentifier", "EUnary", "EBinary", "ECall", "EConditional", "EArray", "ECompound"]
 
     @staticmethod
-    def Literal(value):
-        return haxpression_ExpressionType("Literal", 0, [value])
+    def ELiteral(value):
+        return haxpression_ExpressionType("ELiteral", 0, [value])
 
     @staticmethod
-    def Identifier(name):
-        return haxpression_ExpressionType("Identifier", 1, [name])
+    def EIdentifier(name):
+        return haxpression_ExpressionType("EIdentifier", 1, [name])
 
     @staticmethod
-    def Unary(operator,operand):
-        return haxpression_ExpressionType("Unary", 2, [operator,operand])
+    def EUnary(operator,operand):
+        return haxpression_ExpressionType("EUnary", 2, [operator,operand])
 
     @staticmethod
-    def Binary(operator,left,right):
-        return haxpression_ExpressionType("Binary", 3, [operator,left,right])
+    def EBinary(operator,left,right):
+        return haxpression_ExpressionType("EBinary", 3, [operator,left,right])
 
     @staticmethod
-    def Call(callee,arguments):
-        return haxpression_ExpressionType("Call", 4, [callee,arguments])
+    def ECall(callee,arguments):
+        return haxpression_ExpressionType("ECall", 4, [callee,arguments])
 
     @staticmethod
-    def Conditional(test,consequent,alternate):
-        return haxpression_ExpressionType("Conditional", 5, [test,consequent,alternate])
+    def EConditional(test,consequent,alternate):
+        return haxpression_ExpressionType("EConditional", 5, [test,consequent,alternate])
 
     @staticmethod
-    def Array(items):
-        return haxpression_ExpressionType("Array", 6, [items])
+    def EArray(items):
+        return haxpression_ExpressionType("EArray", 6, [items])
 
     @staticmethod
-    def Compound(items):
-        return haxpression_ExpressionType("Compound", 7, [items])
+    def ECompound(items):
+        return haxpression_ExpressionType("ECompound", 7, [items])
 haxpression_ExpressionType._hx_class = haxpression_ExpressionType
 
 
@@ -2440,7 +2440,7 @@ class haxpression_Parser:
             def _hx_local_3():
                 def _hx_local_2(expression1):
                     return haxpression__Expression_Expression_Impl_.toExpressionType(expression1)
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Compound(list(map(_hx_local_2,self.expressions))))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ECompound(list(map(_hx_local_2,self.expressions))))
             return _hx_local_3()
 
     def charAt(self,index):
@@ -2483,7 +2483,7 @@ class haxpression_Parser:
                 alternate = self.gobbleExpression()
                 if (alternate is None):
                     raise _HxException(haxpression_Error("expected an \"alternate\" expression for ternary conditional expression", self.inputString, self.index))
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Conditional(haxpression__Expression_Expression_Impl_.toExpressionType(expression),haxpression__Expression_Expression_Impl_.toExpressionType(consequent),haxpression__Expression_Expression_Impl_.toExpressionType(alternate)))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EConditional(haxpression__Expression_Expression_Impl_.toExpressionType(expression),haxpression__Expression_Expression_Impl_.toExpressionType(consequent),haxpression__Expression_Expression_Impl_.toExpressionType(alternate)))
         return expression
 
     def gobbleBinaryOperator(self):
@@ -2527,7 +2527,7 @@ class haxpression_Parser:
                 right = (None if ((len(stack) == 0)) else stack.pop())
                 binaryOperator = Reflect.field(((None if ((len(stack) == 0)) else stack.pop())),"operator")
                 left = (None if ((len(stack) == 0)) else stack.pop())
-                expression1 = haxpression_ExpressionType.Binary(binaryOperator,haxpression__Expression_Expression_Impl_.toExpressionType(left),haxpression__Expression_Expression_Impl_.toExpressionType(right))
+                expression1 = haxpression_ExpressionType.EBinary(binaryOperator,haxpression__Expression_Expression_Impl_.toExpressionType(left),haxpression__Expression_Expression_Impl_.toExpressionType(right))
                 stack.append(expression1)
             expression = self.gobbleToken()
             if (expression is None):
@@ -2537,7 +2537,7 @@ class haxpression_Parser:
         i = (len(stack) - 1)
         expression = (stack[i] if i >= 0 and i < len(stack) else None)
         while (i > 1):
-            expression = haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Binary(Reflect.field(python_internal_ArrayImpl._get(stack, (i - 1)),"operator"),python_internal_ArrayImpl._get(stack, (i - 2)),haxpression__Expression_Expression_Impl_.toExpressionType(expression)))
+            expression = haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EBinary(Reflect.field(python_internal_ArrayImpl._get(stack, (i - 1)),"operator"),python_internal_ArrayImpl._get(stack, (i - 2)),haxpression__Expression_Expression_Impl_.toExpressionType(expression)))
             i = (i - 2)
         return expression
 
@@ -2561,7 +2561,7 @@ class haxpression_Parser:
                     _hx_local_1 = _hx_local_0.index
                     _hx_local_0.index = (_hx_local_1 + toCheckLength)
                     _hx_local_0.index
-                    return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Unary(toCheck,haxpression__Expression_Expression_Impl_.toExpressionType(self.gobbleToken())))
+                    return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EUnary(toCheck,haxpression__Expression_Expression_Impl_.toExpressionType(self.gobbleToken())))
                 toCheckLength = (toCheckLength - 1)
                 _hx_len = toCheckLength
                 toCheck = HxString.substr(toCheck,0,_hx_len)
@@ -2622,13 +2622,13 @@ class haxpression_Parser:
             if (not haxpression_utils_Chars.isDecimalDigit(self.charCodeAt((self.index - 1)))):
                 raise _HxException(haxpression_Error(((("expected exponent in numeric literal: \"" + ("null" if numberString is None else numberString)) + HxOverrides.stringOrNull(self.charAt(self.index))) + "\""), self.inputString, self.index))
         if (self.index >= self.length):
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression_ValueType.VFloat(Std.parseFloat(numberString))))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression_ValueType.VFloat(Std.parseFloat(numberString))))
         charCode = self.charCodeAt(self.index)
         if haxpression_utils_Chars.isIdentifierStart(charCode):
             raise _HxException(haxpression_Error(((("variable names cannot start with a number: \"" + ("null" if numberString is None else numberString)) + HxOverrides.stringOrNull(self.charAt(self.index))) + "\""), self.inputString, self.index))
         elif (charCode == haxpression_utils_Chars.PERIOD_CODE):
             raise _HxException(haxpression_Error(((("unexpected period in numeric literal: \"" + ("null" if numberString is None else numberString)) + HxOverrides.stringOrNull(self.charAt(self.index))) + "\""), self.inputString, self.index))
-        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression_ValueType.VFloat(Std.parseFloat(numberString))))
+        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression_ValueType.VFloat(Std.parseFloat(numberString))))
 
     def gobbleStringLiteral(self):
         _hx_str = ""
@@ -2670,7 +2670,7 @@ class haxpression_Parser:
                 _hx_str = (("null" if _hx_str is None else _hx_str) + ("null" if char is None else char))
         if (not closed):
             raise _HxException(haxpression_Error((("unclosed quote after: \"" + ("null" if _hx_str is None else _hx_str)) + "\""), self.inputString, self.index))
-        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression_ValueType.VString(_hx_str)))
+        return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression_ValueType.VString(_hx_str)))
 
     def gobbleIdentifier(self):
         charCode = self.charCodeAt(self.index)
@@ -2696,30 +2696,30 @@ class haxpression_Parser:
         _hx_local_4 = len((identifier.lower()))
         if (_hx_local_4 == 9):
             if ((identifier.lower()) == "undefined"):
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression_ValueType.VNA))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression_ValueType.VNA))
             else:
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Identifier(identifier))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EIdentifier(identifier))
         elif (_hx_local_4 == 5):
             if ((identifier.lower()) == "false"):
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression_ValueType.VBool(False)))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression_ValueType.VBool(False)))
             else:
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Identifier(identifier))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EIdentifier(identifier))
         elif (_hx_local_4 == 4):
             if ((identifier.lower()) == "null"):
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression_ValueType.VNA))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression_ValueType.VNA))
             elif ((identifier.lower()) == "true"):
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression_ValueType.VBool(True)))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression_ValueType.VBool(True)))
             else:
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Identifier(identifier))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EIdentifier(identifier))
         elif (_hx_local_4 == 2):
             if ((identifier.lower()) == "na"):
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression_ValueType.VNA))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression_ValueType.VNA))
             elif ((identifier.lower()) == "nm"):
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Literal(haxpression_ValueType.VNM))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ELiteral(haxpression_ValueType.VNM))
             else:
-                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Identifier(identifier))
+                return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EIdentifier(identifier))
         else:
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Identifier(identifier))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EIdentifier(identifier))
 
     def gobbleArguments(self,terminationCharCode):
         expressions = []
@@ -2772,7 +2772,7 @@ class haxpression_Parser:
                         raise _HxException(haxpression_Error("expected function name identifier for function call expression", self.inputString, self.index))
                     def _hx_local_2(expression1):
                         return haxpression__Expression_Expression_Impl_.toExpressionType(expression1)
-                    expression = haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Call(callee,list(map(_hx_local_2,self.gobbleArguments(haxpression_utils_Chars.CLOSE_PAREN_CODE)))))
+                    expression = haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.ECall(callee,list(map(_hx_local_2,self.gobbleArguments(haxpression_utils_Chars.CLOSE_PAREN_CODE)))))
                 self.gobbleSpaces()
                 charCode = self.charCodeAt(self.index)
         return expression
@@ -2800,7 +2800,7 @@ class haxpression_Parser:
         def _hx_local_3():
             def _hx_local_2(expression):
                 return haxpression__Expression_Expression_Impl_.toExpressionType(expression)
-            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.Array(list(map(_hx_local_2,self.gobbleArguments(haxpression_utils_Chars.CLOSE_BRACKET_CODE)))))
+            return haxpression__Expression_Expression_Impl_.fromExpressionType(haxpression_ExpressionType.EArray(list(map(_hx_local_2,self.gobbleArguments(haxpression_utils_Chars.CLOSE_BRACKET_CODE)))))
         return _hx_local_3()
 
     @staticmethod
@@ -2808,79 +2808,6 @@ class haxpression_Parser:
         return haxpression_Parser(input).internalParse()
 
 haxpression_Parser._hx_class = haxpression_Parser
-
-
-class haxpression_PythonExports:
-    _hx_class_name = "haxpression.PythonExports"
-    __slots__ = ()
-    _hx_statics = ["getEvaluationInfo", "parseToObject", "parseEvaluate", "expressionToDict"]
-
-    @staticmethod
-    def getEvaluationInfo(mappings,requestedFieldIds):
-        obj = python_Lib.dictToAnon(mappings)
-        _hx_map = haxe_ds_StringMap()
-        _g = 0
-        _g1 = python_Boot.fields(obj)
-        while (_g < len(_g1)):
-            field = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
-            _g = (_g + 1)
-            arr = Reflect.field(obj,field)
-            _hx_map.h[field] = list(map(haxpression__ExpressionOrValue_ExpressionOrValue_Impl_.fromString,arr))
-        info = haxpression_ExpressionGroup.fromFallbackMap(_hx_map).getEvaluationInfo(requestedFieldIds)
-        expressionAstsObj = _hx_AnonObject({})
-        tmp = info.expressions.keys()
-        while tmp.hasNext():
-            key = tmp.next()
-            value = haxpression_PythonExports.expressionToDict(info.expressions.h.get(key,None))
-            setattr(expressionAstsObj,(("_hx_" + key) if (key in python_Boot.keywords) else (("_hx_" + key) if (((((len(key) > 2) and ((ord(key[0]) == 95))) and ((ord(key[1]) == 95))) and ((ord(key[(len(key) - 1)]) != 95)))) else key)),value)
-        return python_Lib.anonToDict(_hx_AnonObject({'expressionAsts': python_Lib.anonToDict(expressionAstsObj), 'externalVariables': info.externalVariables, 'sortedComputedVariables': info.sortedComputedVariables}))
-
-    @staticmethod
-    def parseToObject(s):
-        return haxpression_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromString(s))
-
-    @staticmethod
-    def parseEvaluate(s,_hx_dict):
-        _hx_map = haxe_ds_StringMap()
-        o = python_Lib.dictToAnon(_hx_dict)
-        _g = 0
-        _g1 = python_Boot.fields(o)
-        while (_g < len(_g1)):
-            field = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
-            _g = (_g + 1)
-            _hx_map.h[field] = haxpression__Value_Value_Impl_.fromDynamic(Reflect.field(o,field))
-        return haxpression__Value_Value_Impl_.toDynamic(haxpression__Expression_Expression_Impl_.evaluate(haxpression__Expression_Expression_Impl_.fromString(s),_hx_map))
-
-    @staticmethod
-    def expressionToDict(expression):
-        _g = haxpression__Expression_Expression_Impl_.toExpressionType(expression)
-        tmp = None
-        if ((_g.index) == 0):
-            tmp = _hx_AnonObject({'type': "Literal", 'value': haxpression__Value_Value_Impl_.toDynamic(_g.params[0])})
-        elif ((_g.index) == 1):
-            tmp = _hx_AnonObject({'type': "Identifier", 'name': _g.params[0]})
-        elif ((_g.index) == 2):
-            tmp = _hx_AnonObject({'type': "Unary", 'operator': _g.params[0], 'operand': haxpression_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[1]))})
-        elif ((_g.index) == 3):
-            tmp = _hx_AnonObject({'type': "Binary", 'operator': _g.params[0], 'left': haxpression_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[1])), 'right': haxpression_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[2]))})
-        elif ((_g.index) == 4):
-            def _hx_local_0(arg):
-                return haxpression_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(arg))
-            tmp = _hx_AnonObject({'type': "Call", 'callee': _g.params[0], 'arguments': list(map(_hx_local_0,_g.params[1]))})
-        elif ((_g.index) == 5):
-            tmp = _hx_AnonObject({'type': "Conditional", 'test': haxpression_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[0])), 'consequent': haxpression_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[1])), 'alternate': haxpression_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[2]))})
-        elif ((_g.index) == 6):
-            def _hx_local_1(item):
-                return haxpression_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(item))
-            tmp = _hx_AnonObject({'type': "Array", 'items': list(map(_hx_local_1,_g.params[0]))})
-        elif ((_g.index) == 7):
-            def _hx_local_2(item1):
-                return haxpression_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(item1))
-            tmp = _hx_AnonObject({'type': "Compound", 'items': list(map(_hx_local_2,_g.params[0]))})
-        else:
-            pass
-        return python_Lib.anonToDict(tmp)
-haxpression_PythonExports._hx_class = haxpression_PythonExports
 
 
 class haxpression_UnaryOperations:
@@ -2931,6 +2858,79 @@ class haxpression_UnaryOperations:
                 return operation(value)
         return _hx_local_0
 haxpression_UnaryOperations._hx_class = haxpression_UnaryOperations
+
+
+class haxpression_python_PythonExports:
+    _hx_class_name = "haxpression.python.PythonExports"
+    __slots__ = ()
+    _hx_statics = ["getEvaluationInfo", "parseToObject", "parseEvaluate", "expressionToDict"]
+
+    @staticmethod
+    def getEvaluationInfo(mappings,requestedFieldIds):
+        obj = python_Lib.dictToAnon(mappings)
+        _hx_map = haxe_ds_StringMap()
+        _g = 0
+        _g1 = python_Boot.fields(obj)
+        while (_g < len(_g1)):
+            field = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
+            _g = (_g + 1)
+            arr = Reflect.field(obj,field)
+            _hx_map.h[field] = list(map(haxpression__ExpressionOrValue_ExpressionOrValue_Impl_.fromString,arr))
+        info = haxpression_ExpressionGroup.fromFallbackMap(_hx_map).getEvaluationInfo(requestedFieldIds)
+        expressionAstsObj = _hx_AnonObject({})
+        tmp = info.expressions.keys()
+        while tmp.hasNext():
+            key = tmp.next()
+            value = haxpression_python_PythonExports.expressionToDict(info.expressions.h.get(key,None))
+            setattr(expressionAstsObj,(("_hx_" + key) if (key in python_Boot.keywords) else (("_hx_" + key) if (((((len(key) > 2) and ((ord(key[0]) == 95))) and ((ord(key[1]) == 95))) and ((ord(key[(len(key) - 1)]) != 95)))) else key)),value)
+        return python_Lib.anonToDict(_hx_AnonObject({'expressionAsts': python_Lib.anonToDict(expressionAstsObj), 'externalVariables': info.externalVariables, 'sortedComputedVariables': info.sortedComputedVariables}))
+
+    @staticmethod
+    def parseToObject(s):
+        return haxpression_python_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromString(s))
+
+    @staticmethod
+    def parseEvaluate(s,_hx_dict):
+        _hx_map = haxe_ds_StringMap()
+        o = python_Lib.dictToAnon(_hx_dict)
+        _g = 0
+        _g1 = python_Boot.fields(o)
+        while (_g < len(_g1)):
+            field = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
+            _g = (_g + 1)
+            _hx_map.h[field] = haxpression__Value_Value_Impl_.fromDynamic(Reflect.field(o,field))
+        return haxpression__Value_Value_Impl_.toDynamic(haxpression__Expression_Expression_Impl_.evaluate(haxpression__Expression_Expression_Impl_.fromString(s),_hx_map))
+
+    @staticmethod
+    def expressionToDict(expression):
+        _g = haxpression__Expression_Expression_Impl_.toExpressionType(expression)
+        tmp = None
+        if ((_g.index) == 0):
+            tmp = _hx_AnonObject({'type': "Literal", 'value': haxpression__Value_Value_Impl_.toDynamic(_g.params[0])})
+        elif ((_g.index) == 1):
+            tmp = _hx_AnonObject({'type': "Identifier", 'name': _g.params[0]})
+        elif ((_g.index) == 2):
+            tmp = _hx_AnonObject({'type': "Unary", 'operator': _g.params[0], 'operand': haxpression_python_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[1]))})
+        elif ((_g.index) == 3):
+            tmp = _hx_AnonObject({'type': "Binary", 'operator': _g.params[0], 'left': haxpression_python_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[1])), 'right': haxpression_python_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[2]))})
+        elif ((_g.index) == 4):
+            def _hx_local_0(arg):
+                return haxpression_python_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(arg))
+            tmp = _hx_AnonObject({'type': "Call", 'callee': _g.params[0], 'arguments': list(map(_hx_local_0,_g.params[1]))})
+        elif ((_g.index) == 5):
+            tmp = _hx_AnonObject({'type': "Conditional", 'test': haxpression_python_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[0])), 'consequent': haxpression_python_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[1])), 'alternate': haxpression_python_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(_g.params[2]))})
+        elif ((_g.index) == 6):
+            def _hx_local_1(item):
+                return haxpression_python_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(item))
+            tmp = _hx_AnonObject({'type': "Array", 'items': list(map(_hx_local_1,_g.params[0]))})
+        elif ((_g.index) == 7):
+            def _hx_local_2(item1):
+                return haxpression_python_PythonExports.expressionToDict(haxpression__Expression_Expression_Impl_.fromExpressionType(item1))
+            tmp = _hx_AnonObject({'type': "Compound", 'items': list(map(_hx_local_2,_g.params[0]))})
+        else:
+            pass
+        return python_Lib.anonToDict(tmp)
+haxpression_python_PythonExports._hx_class = haxpression_python_PythonExports
 
 
 class haxpression_utils_Arrays:

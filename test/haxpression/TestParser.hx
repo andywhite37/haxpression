@@ -25,19 +25,19 @@ class TestParser {
 
   public function testBasicNumbers() {
     switch Parser.parse("1").toExpressionType() {
-      case Literal(VFloat(value)) : Assert.same(1, value);
+      case ELiteral(VFloat(value)) : Assert.same(1.0, value);
       case _ : Assert.fail();
     };
     switch Parser.parse("-1").toExpressionType() {
-      case Unary(operator, Literal(VFloat(operand))) : Assert.same(1, operand);
+      case EUnary(operator, ELiteral(VFloat(operand))) : Assert.same(1.0, operand);
       case _ : Assert.fail();
     };
     switch Parser.parse("1.23").toExpressionType() {
-      case Literal(VFloat(value)) : Assert.same(1.23, value);
+      case ELiteral(VFloat(value)) : Assert.same(1.23, value);
       case _ : Assert.fail();
     };
     switch Parser.parse("-1.23").toExpressionType() {
-      case Unary(operator, operand) : Assert.same("-", operator); Assert.same(1.23, (operand : Expression).evaluate().toFloat());
+      case EUnary(operator, operand) : Assert.same("-", operator); Assert.same(1.23, (operand : Expression).evaluate().toFloat());
       case _ : Assert.fail();
     };
   }
@@ -149,11 +149,11 @@ class TestParser {
       operator: "+",
       left: {
         type: "Literal",
-        value: 1
+        value: 1.0
       },
       right: {
         type: "Literal",
-        value: 2
+        value: 2.0
       }
     });
 
@@ -165,16 +165,16 @@ class TestParser {
         operator: "+",
         left: {
           type: "Literal",
-          value: 1
+          value: 1.0
         },
         right: {
           type: "Literal",
-          value: 2
+          value: 2.0
         }
       },
       right: {
         type: "Literal",
-        value: 3
+        value: 3.0
       }
     });
 
@@ -189,21 +189,21 @@ class TestParser {
           operator: "+",
           left: {
             type: "Literal",
-            value: 1
+            value: 1.0
           },
           right: {
             type: "Literal",
-            value: 2
+            value: 2.0
           }
         },
         right: {
           type: "Literal",
-          value: 3
+          value: 3.0
         },
       },
       right: {
         type: "Literal",
-        value: 4
+        value: 4.0
       }
     });
   }

@@ -1,0 +1,8 @@
+# JavaScript
+-lib utest
+-lib graphx
+-cp src
+-cp test
+-main haxpression.TestAll
+-js bin/js/runner.js
+-cmd node bin/js/runner.js

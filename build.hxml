@@ -1,15 +1,1 @@
--lib utest
--lib graphx
--cp src
--cp test
-
---each
-
--main haxpression.TestAll
--js bin/runner.js
--cmd node bin/runner.js
-
---next
-
--python python/haxpression.py
-haxpression.PythonExports
+build_js.hxml

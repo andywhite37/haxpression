@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+echo "------ JavaScript ------"
+haxe build_js.hxml
+
+echo "------ Python ------"
+haxe build_python.hxml
+
+# TODO: currently broken because of issue in graphx
+#echo "------ Java ------"
+#haxe build_java.hxml

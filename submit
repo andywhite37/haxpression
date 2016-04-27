@@ -6,7 +6,7 @@ if [[ -f haxpression.zip ]]; then
   rm haxpression.zip
 fi
 
-haxe build.hxml
+./build
 #git add -A
 #git commit -m 'Submit to haxelib'
 

@@ -42,7 +42,7 @@ class TestExpression {
   public function testFromInt() {
     var expr = Expression.fromInt(123);
     switch expr.toExpressionType() {
-      case Literal(VInt(value)) : Assert.same(123, value);
+      case ELiteral(VInt(value)) : Assert.same(123, value);
       case _ : Assert.fail();
     };
   }
@@ -50,7 +50,7 @@ class TestExpression {
   public function testFromFloat() {
     var expr = Expression.fromFloat(123.12);
     switch expr.toExpressionType() {
-      case Literal(VFloat(value)) : Assert.same(123.12, value);
+      case ELiteral(VFloat(value)) : Assert.same(123.12, value);
       case _ : Assert.fail();
     };
   }
@@ -58,7 +58,7 @@ class TestExpression {
   public function testFromBool() {
     var expr = Expression.fromBool(false);
     switch expr.toExpressionType() {
-      case Literal(VBool(value)) : Assert.same(false, value);
+      case ELiteral(VBool(value)) : Assert.same(false, value);
       case _ : Assert.fail();
     };
   }
@@ -66,14 +66,14 @@ class TestExpression {
   public function testFromStringLiteral() {
     var expr = Expression.fromStringLiteral("hi");
     switch expr.toExpressionType() {
-      case Literal(VString(value)) : Assert.same("hi", value);
+      case ELiteral(VString(value)) : Assert.same("hi", value);
       case _ : Assert.fail();
     };
   }
 
   public function testToString() {
-    (Binary("+", Literal(VInt(1)), Literal(VInt(2))) : Expression).toStringSameAs("(1 + 2)");
-    (Binary("+", Binary("+", Literal(VInt(1)), Literal(VInt(2))), Literal(VInt(3))) : Expression).toStringSameAs("((1 + 2) + 3)");
+    (EBinary("+", ELiteral(VInt(1)), ELiteral(VInt(2))) : Expression).toStringSameAs("(1 + 2)");
+    (EBinary("+", EBinary("+", ELiteral(VInt(1)), ELiteral(VInt(2))), ELiteral(VInt(3))) : Expression).toStringSameAs("((1 + 2) + 3)");
     ("MY_IDENT" : Expression).toStringSameAs("MY_IDENT");
     ("1" : Expression).toStringSameAs("1");
     ("COALESCE(1, 2, 3 + 5, 4)" : Expression).toStringSameAs("COALESCE(1, 2, (3 + 5), 4)");
@@ -87,12 +87,12 @@ class TestExpression {
   }
 
   public function testSubstituteValue() {
-    var expr : Expression = Binary("+", Literal(VInt(1)), Identifier("PI"));
+    var expr : Expression = EBinary("+", ELiteral(VInt(1)), EIdentifier("PI"));
     expr.substitute([ "PI" => Math.PI ]).evaluatesToFloat(1 + Math.PI);
   }
 
   public function testSubstituteExpression() {
-    var expr : Expression = Binary("+", Literal(VInt(1)), Identifier("PI"));
+    var expr : Expression = EBinary("+", ELiteral(VInt(1)), EIdentifier("PI"));
     expr = expr.substitute([ "PI" => '1 + 2 + 0.14' ]);
     expr.toStringSameAs('(1 + ((1 + 2) + 0.14))');
   }

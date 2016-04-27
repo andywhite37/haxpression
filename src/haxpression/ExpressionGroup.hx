@@ -78,26 +78,6 @@ class ExpressionGroup {
     return forVariables.reduce(accExternalVariables, []);
   }
 
-  /*
-  public function getDependencyVariables(variable : String) : Array<String> {
-    function accDependencyVariables(acc : Array<String>, variable : String) : Array<String> {
-      if (!hasVariable(variable)) {
-        return acc;
-      }
-      var expression = getExpression(variable);
-      var expressionVariables = expression.getVariables();
-      for (expressionVariable in expressionVariables) {
-        if (!acc.contains(expressionVariable)) {
-          acc.push(expressionVariable);
-          acc = accDependencyVariables(acc, expressionVariable);
-        }
-      }
-      return acc;
-    }
-    return accDependencyVariables([], variable);
-  }
-  */
-
   public function getExpressionOrValue(variable : String) : ExpressionOrValue {
     if (!hasVariable(variable)) {
       throw new Error('variable $variable is not defined in this expression group');

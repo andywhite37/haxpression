@@ -1,0 +1,18 @@
+# Python
+-lib utest
+-lib graphx
+-cp src
+-cp test
+
+--each
+
+# Unit tests
+-main haxpression.TestAll
+-python bin/python/runner.py
+-cmd python3 bin/python/runner.py
+
+--next
+
+# Export module
+-python python/haxpression.py
+haxpression.python.PythonExports

@@ -42,7 +42,7 @@ class Parser {
     return if (expressions.length == 1) {
       expressions[0];
     } else {
-      Compound(expressions.map(function(expression) return expression.toExpressionType()));
+      ECompound(expressions.map(function(expression) return expression.toExpressionType()));
     }
   }
 
@@ -77,7 +77,7 @@ class Parser {
         if (alternate == null) {
           throw new Error('expected an "alternate" expression for ternary conditional expression', inputString, index);
         }
-        return Conditional(expression, consequent, alternate);
+        return EConditional(expression, consequent, alternate);
       }
     }
 
@@ -142,7 +142,7 @@ class Parser {
         right = stack.pop();
         binaryOperator = stack.pop().operator;
         left = stack.pop();
-        var expression = Binary(binaryOperator, left, right);
+        var expression = EBinary(binaryOperator, left, right);
         stack.push(expression);
       }
 
@@ -157,7 +157,7 @@ class Parser {
     var i = stack.length - 1;
     expression = stack[i];
     while (i > 1) {
-      expression = Binary(stack[i - 1].operator, stack[i - 2], expression);
+      expression = EBinary(stack[i - 1].operator, stack[i - 2], expression);
       i -= 2;
     }
 
@@ -185,7 +185,7 @@ class Parser {
       while (toCheckLength > 0) {
         if (UnaryOperations.hasOperator(toCheck)) {
           index += toCheckLength;
-          return Unary(toCheck, gobbleToken());
+          return EUnary(toCheck, gobbleToken());
         }
         toCheck = toCheck.substr(0, --toCheckLength);
       }
@@ -228,7 +228,7 @@ class Parser {
     }
 
     if(index >= length)
-      return Literal(VFloat(Std.parseFloat(numberString)));
+      return ELiteral(VFloat(Std.parseFloat(numberString)));
 
     var charCode = charCodeAt(index);
 
@@ -240,7 +240,7 @@ class Parser {
     }
 
 
-    return Literal(VFloat(Std.parseFloat(numberString)));
+    return ELiteral(VFloat(Std.parseFloat(numberString)));
   }
 
   function gobbleStringLiteral() : Expression {
@@ -272,7 +272,7 @@ class Parser {
       throw new Error('unclosed quote after: "$str"', inputString, index);
     }
 
-    return Literal(VString(str));
+    return ELiteral(VString(str));
   }
 
   function gobbleIdentifier() : Expression {
@@ -299,13 +299,13 @@ class Parser {
 
     // Special identifiers that are actually values
     return switch identifier.toLowerCase() {
-      case "true" : Literal(VBool(true));
-      case "false" : Literal(VBool(false));
-      case "null" : Literal(VNA);
-      case "undefined" : Literal(VNA);
-      case "na" : Literal(VNA);
-      case "nm" : Literal(VNM);
-      case _ : Identifier(identifier);
+      case "true" : ELiteral(VBool(true));
+      case "false" : ELiteral(VBool(false));
+      case "null" : ELiteral(VNA);
+      case "undefined" : ELiteral(VNA);
+      case "na" : ELiteral(VNA);
+      case "nm" : ELiteral(VNM);
+      case _ : EIdentifier(identifier);
     };
   }
 
@@ -366,12 +366,12 @@ class Parser {
           throw new Error('member access expressions like "a["b"]" are not supported', inputString, index);
         } else if (charCode == Chars.OPEN_PAREN_CODE) {
           var callee = switch expression.toExpressionType() {
-            case Identifier(name) : name;
+            case EIdentifier(name) : name;
             case _: throw new Error('expected function name identifier for function call expression', inputString, index);
           };
           var arguments = gobbleArguments(Chars.CLOSE_PAREN_CODE)
           .map(function(expression) return expression.toExpressionType());
-          expression = Call(callee, arguments);
+          expression = ECall(callee, arguments);
         }
         gobbleSpaces();
         charCode = charCodeAt(index);
@@ -398,6 +398,6 @@ class Parser {
     index++;
     var items = gobbleArguments(Chars.CLOSE_BRACKET_CODE)
       .map(function(expression) return expression.toExpressionType());
-    return Array(items);
+    return EArray(items);
   }
 }

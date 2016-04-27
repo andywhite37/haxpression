@@ -54,7 +54,7 @@ abstract ExpressionOrValue(Either<Expression, Value>) {
   public function toExpression() : Expression {
     return switch this {
       case Left(expression): expression;
-      case Right(value): Literal(value);
+      case Right(value): ELiteral(value);
     };
   }
 
