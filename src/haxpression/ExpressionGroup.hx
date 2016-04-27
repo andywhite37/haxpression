@@ -60,13 +60,22 @@ class ExpressionGroup {
     return variables;
   }
 
-  public function getExternalVariables() : Array<String> {
-    return getVariables(true).reduce(function(acc : Array<String>, variable) {
+  public function getExternalVariables(?forVariables : Array<String>) : Array<String> {
+    if (forVariables == null) forVariables = getVariables(true);
+    function accExternalVariables(acc : Array<String>, variable : String) : Array<String> {
       if (!hasVariable(variable)) {
-        acc.push(variable);
+        if (!acc.contains(variable)){
+          acc.push(variable);
+        }
+        return acc;
+      }
+      var expressionVariables = getExpression(variable).getVariables();
+      for (expressionVariable in expressionVariables) {
+        acc = accExternalVariables(acc, expressionVariable);
       }
       return acc;
-    }, []);
+    }
+    return forVariables.reduce(accExternalVariables, []);
   }
 
   /*
@@ -304,7 +313,7 @@ class ExpressionGroup {
 
     result.sortedComputedVariables = group.getDependencySortedVariables(forVariables);
     //group = group.expand();
-    result.externalVariables = group.getExternalVariables();
+    result.externalVariables = group.getExternalVariables(forVariables);
 
     // remove external variables from the sorted computed variables
     result.sortedComputedVariables = result.sortedComputedVariables.filter(function(variable) {

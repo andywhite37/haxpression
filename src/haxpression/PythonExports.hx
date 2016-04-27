@@ -25,7 +25,7 @@ class PythonExports {
       map.set(field, arr.map(ExpressionOrValue.fromString));
     }
     var expressionGroup = ExpressionGroup.fromFallbackMap(map);
-    var info = expressionGroup.getEvaluationInfo();
+    var info = expressionGroup.getEvaluationInfo(requestedFieldIds);
 
     var expressionAstsObj = {};
     for (key in info.expressions.keys()) {

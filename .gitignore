@@ -6,5 +6,5 @@
 
 # project files
 bin/
-__pycache__
+python/__pycache__
 haxpression.zip

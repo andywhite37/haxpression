@@ -1938,15 +1938,25 @@ class haxpression_ExpressionGroup:
         variables.sort(key= python_lib_Functools.cmp_to_key(haxpression_utils_Strings.icompare))
         return variables
 
-    def getExternalVariables(self):
+    def getExternalVariables(self,forVariables = None):
         _gthis = self
-        def _hx_local_1():
-            def _hx_local_0(acc,variable):
-                if (not _gthis.hasVariable(variable)):
+        if (forVariables is None):
+            forVariables = self.getVariables(True)
+        accExternalVariables = None
+        def _hx_local_1(acc,variable):
+            if (not _gthis.hasVariable(variable)):
+                if (not haxpression_utils_Arrays.contains(acc,variable)):
                     acc.append(variable)
                 return acc
-            return haxpression_utils_Arrays.reduce(self.getVariables(True),_hx_local_0,[])
-        return _hx_local_1()
+            expressionVariables = haxpression__Expression_Expression_Impl_.getVariables(_gthis.getExpression(variable))
+            _g = 0
+            while (_g < len(expressionVariables)):
+                expressionVariable = (expressionVariables[_g] if _g >= 0 and _g < len(expressionVariables) else None)
+                _g = (_g + 1)
+                acc = accExternalVariables(acc,expressionVariable)
+            return acc
+        accExternalVariables = _hx_local_1
+        return haxpression_utils_Arrays.reduce(forVariables,accExternalVariables,[])
 
     def getExpressionOrValue(self,variable):
         if (not self.hasVariable(variable)):
@@ -2167,7 +2177,7 @@ class haxpression_ExpressionGroup:
             forVariables = group.getVariables(False)
         result = _hx_AnonObject({'expressions': haxe_ds_StringMap(), 'externalVariables': [], 'sortedComputedVariables': []})
         result.sortedComputedVariables = group.getDependencySortedVariables(forVariables)
-        result.externalVariables = group.getExternalVariables()
+        result.externalVariables = group.getExternalVariables(forVariables)
         def _hx_local_0(variable):
             return (not haxpression_utils_Arrays.contains(result.externalVariables,variable))
         result.sortedComputedVariables = list(filter(_hx_local_0,result.sortedComputedVariables))
@@ -2816,7 +2826,7 @@ class haxpression_PythonExports:
             _g = (_g + 1)
             arr = Reflect.field(obj,field)
             _hx_map.h[field] = list(map(haxpression__ExpressionOrValue_ExpressionOrValue_Impl_.fromString,arr))
-        info = haxpression_ExpressionGroup.fromFallbackMap(_hx_map).getEvaluationInfo()
+        info = haxpression_ExpressionGroup.fromFallbackMap(_hx_map).getEvaluationInfo(requestedFieldIds)
         expressionAstsObj = _hx_AnonObject({})
         tmp = info.expressions.keys()
         while tmp.hasNext():

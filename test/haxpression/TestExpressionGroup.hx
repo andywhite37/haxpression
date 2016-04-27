@@ -18,7 +18,11 @@ class TestExpressionGroup {
     ]);
     Assert.same(["a", "b", "c", "x"], group.getVariables(false));
     Assert.same(["a", "b", "c", "d", "e", "f", "x", "y", "z"], group.getVariables(true));
+
     Assert.same(["d", "e", "f", "y", "z"], group.getExternalVariables());
+    Assert.same(["d", "e", "f"], group.getExternalVariables(["a"]));
+    Assert.same(["y", "z"], group.getExternalVariables(["x"]));
+    Assert.same(["y"], group.getExternalVariables(["y"]));
 
     Assert.same(["z", "y", "x", "f", "e", "d", "c", "b", "a"], group.getDependencySortedVariables());
     Assert.same(["f", "e", "d", "c", "b", "a"], group.getDependencySortedVariables(["a"]));
@@ -174,6 +178,7 @@ class TestExpressionGroup {
     ]);
     var info = group.getEvaluationInfo(["ratios_ebitda_margin", "ratios_ni_margin"]);
     Assert.same(8, info.expressions.keys().toArray().length);
+    Assert.same(info.sortedComputedVariables.length, info.expressions.keys().toArray().length);
     Assert.same({ type: "Identifier", name: "iq_ni" }, info.expressions.get("fs_ni").toObject());
     Assert.same({ type: "Identifier", name: "fs_ni" }, info.expressions.get("asn_ni").toObject());
     Assert.same({ type: "Identifier", name: "iq_sales" }, info.expressions.get("fs_sales").toObject());
@@ -192,10 +197,58 @@ class TestExpressionGroup {
       left: { type: "Identifier", name: "asn_ebitda" },
       right: { type: "Identifier", name: "asn_sales" }
     }, info.expressions.get("ratios_ebitda_margin").toObject());
-    Assert.same(["iq_ebitda", "iq_ni", "iq_sales"], info.externalVariables);
+    Assert.same(["iq_ebitda", "iq_sales", "iq_ni"], info.externalVariables);
     Assert.same(["fs_ni", "asn_ni", "fs_sales", "fs_ebitda", "asn_sales", "ratios_ni_margin", "asn_ebitda", "ratios_ebitda_margin"], info.sortedComputedVariables);
   }
 
+  public function testGetEvaluationInfo2() {
+    var group = new ExpressionGroup([
+      'ratios_ebitda_margin' => 'asn_ebitda / asn_sales',
+      'ratios_ni_margin' => 'asn_ni / asn_sales',
+      'asn_ebitda' => 'fs_ebitda',
+      'asn_ni' => 'fs_ni',
+      'asn_sales' => 'fs_sales',
+      'fs_ebitda' => 'iq_ebitda',
+      'fs_ni' => 'iq_ni',
+      'fs_sales' => 'iq_sales',
+    ]);
+    var info = group.getEvaluationInfo(["ratios_ebitda_margin"]);
+    Assert.same(5, info.expressions.keys().toArray().length);
+    Assert.same(info.sortedComputedVariables.length, info.expressions.keys().toArray().length);
+    Assert.same({ type: "Identifier", name: "iq_sales" }, info.expressions.get("fs_sales").toObject());
+    Assert.same({ type: "Identifier", name: "iq_ebitda" }, info.expressions.get("fs_ebitda").toObject());
+    Assert.same({ type: "Identifier", name: "fs_sales" }, info.expressions.get("asn_sales").toObject());
+    Assert.same({ type: "Identifier", name: "fs_ebitda" }, info.expressions.get("asn_ebitda").toObject());
+    Assert.same({
+      type: "Binary",
+      operator: "/",
+      left: { type: "Identifier", name: "asn_ebitda" },
+      right: { type: "Identifier", name: "asn_sales" }
+    }, info.expressions.get("ratios_ebitda_margin").toObject());
+    Assert.same(["iq_ebitda", "iq_sales"], info.externalVariables);
+    Assert.same(["fs_sales", "fs_ebitda", "asn_sales", "asn_ebitda", "ratios_ebitda_margin"], info.sortedComputedVariables);
+  }
+
+  public function testGetEvaluationInfo3() {
+    var group = new ExpressionGroup([
+      'ratios_ebitda_margin' => 'asn_ebitda / asn_sales',
+      'ratios_ni_margin' => 'asn_ni / asn_sales',
+      'asn_ebitda' => 'fs_ebitda',
+      'asn_ni' => 'fs_ni',
+      'asn_sales' => 'fs_sales',
+      'fs_ebitda' => 'iq_ebitda',
+      'fs_ni' => 'iq_ni',
+      'fs_sales' => 'iq_sales',
+    ]);
+    var info = group.getEvaluationInfo(["asn_ni", "fs_sales"]);
+    Assert.same(3, info.expressions.keys().toArray().length);
+    Assert.same(info.sortedComputedVariables.length, info.expressions.keys().toArray().length);
+    Assert.same({ type: "Identifier", name: "iq_ni" }, info.expressions.get("fs_ni").toObject());
+    Assert.same({ type: "Identifier", name: "fs_ni" }, info.expressions.get("asn_ni").toObject());
+    Assert.same({ type: "Identifier", name: "iq_sales" }, info.expressions.get("fs_sales").toObject());
+    Assert.same(["iq_ni", "iq_sales"], info.externalVariables);
+    Assert.same(["fs_sales", "fs_ni", "asn_ni"], info.sortedComputedVariables);
+  }
 
   function getProcessedFinancialExpressions() : Map<String, ExpressionOrValue> {
     var data = getFinancialExpressions();
