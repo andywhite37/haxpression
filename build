@@ -8,6 +8,6 @@ haxe build_js.hxml
 echo "------ Python ------"
 haxe build_python.hxml
 
-# TODO: currently broken because of issue in graphx
+# TODO: fix haxe/java compiler issue in graphx
 #echo "------ Java ------"
 #haxe build_java.hxml

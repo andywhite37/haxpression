@@ -1,9 +1,7 @@
-# JavaScript
--lib utest
--lib graphx
 -cp src
 -cp test
+-lib utest
+-lib graphx
 -main haxpression.TestAll
 -java bin/java
-#haxpression.Expression
 -cmd java -jar bin/java/TestAll.jar
