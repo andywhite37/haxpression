@@ -256,24 +256,28 @@ class ExpressionGroup {
 
   public function getVariableDependencyGraph(?forVariables : Array<String>) : Graph<String> {
     if (forVariables == null) forVariables = getVariables();
-    function accVariableDependencyGraph(graph : Graph<String>, variable) {
-      if (!hasVariable(variable)) {
-        return graph;
-      }
-      var expression = getExpression(variable);
-      //trace(expression.toString());
-      var expressionVariables = expression.getVariables();
-      if (expressionVariables.length > 0) {
-        graph.addEdgesTo(variable, NodeOrValue.mapValues(expressionVariables));
-        for (expressionVariable in expressionVariables) {
-          graph = accVariableDependencyGraph(graph, expressionVariable);
-        }
-      }
+    var seen = new Map();
+    return forVariables.reduce(function(graph : Graph<String>, variable) {
+      return accVariableDependencyGraph(this, variable, graph, seen);
+    }, new StringGraph());
+  }
+
+  static function accVariableDependencyGraph(group : ExpressionGroup, variable : String, graph : Graph<String>, seen : Map<String, Bool>) : Graph<String> {
+    if (seen.exists(variable)) {
       return graph;
     }
-    return forVariables.reduce(function(graph : Graph<String>, variable) {
-      return accVariableDependencyGraph(graph, variable);
-    }, new StringGraph());
+    if (!group.hasVariable(variable)) {
+      return graph;
+    }
+    var expression = group.getExpression(variable);
+    var expressionVariables = expression.getVariables();
+    if (expressionVariables.length > 0) {
+      graph.addEdgesTo(variable, NodeOrValue.mapValues(expressionVariables));
+      for (expressionVariable in expressionVariables) {
+        graph = accVariableDependencyGraph(group, expressionVariable, graph, seen);
+      }
+    }
+    return graph;
   }
 
   public function getDependencySortedVariables(?forVariables : Array<String>) : Array<String> {
@@ -316,3 +320,4 @@ typedef EvaluationInfo = {
   externalVariables: Array<String>,
   sortedComputedVariables: Array<String>
 };
+
