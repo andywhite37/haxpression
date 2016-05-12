@@ -62,20 +62,23 @@ class ExpressionGroup {
 
   public function getExternalVariables(?forVariables : Array<String>) : Array<String> {
     if (forVariables == null) forVariables = getVariables(true);
-    function accExternalVariables(acc : Array<String>, variable : String) : Array<String> {
-      if (!hasVariable(variable)) {
-        if (!acc.contains(variable)){
-          acc.push(variable);
-        }
-        return acc;
+    return forVariables.reduce(function(externalVariables, variable) {
+      return accExternalVariables(this, variable, externalVariables);
+    }, []);
+  }
+
+  public static function accExternalVariables(group : ExpressionGroup, variable : String, externalVariables : Array<String>) : Array<String> {
+    if (!group.hasVariable(variable)) {
+      if (!externalVariables.contains(variable)){
+        externalVariables.push(variable);
       }
-      var expressionVariables = getExpression(variable).getVariables();
-      for (expressionVariable in expressionVariables) {
-        acc = accExternalVariables(acc, expressionVariable);
-      }
-      return acc;
+      return externalVariables;
     }
-    return forVariables.reduce(accExternalVariables, []);
+    var expressionVariables = group.getExpression(variable).getVariables();
+    for (expressionVariable in expressionVariables) {
+      externalVariables = accExternalVariables(group, expressionVariable, externalVariables);
+    }
+    return externalVariables;
   }
 
   public function getExpressionOrValue(variable : String) : ExpressionOrValue {
@@ -269,6 +272,7 @@ class ExpressionGroup {
     if (!group.hasVariable(variable)) {
       return graph;
     }
+    seen.set(variable, true);
     var expression = group.getExpression(variable);
     var expressionVariables = expression.getVariables();
     if (expressionVariables.length > 0) {
