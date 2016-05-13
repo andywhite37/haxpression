@@ -12,4 +12,5 @@ version=$(cat haxelib.json | jq --monochrome-output .version | sed 's/"//g')
 echo "version: $version"
 zip -r haxpression.zip LICENSE README.md build.hxml haxelib.json hmm.json src test
 haxelib submit haxpression.zip
-git tag -a -m "v$version"
+git tag -a -m "haxelib version: $version" "v$version"
+git push origin --tags
