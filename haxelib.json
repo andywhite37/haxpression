@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "classPath": "src/",
-  "releasenote": "Add 'E' prefix for ExpressionType constructors to avoid name conflicts.  Add python and java builds (java not currently compiling).",
+  "releasenote": "Small performance fixes for ExpressionGroup graph operations",
   "contributors": ["andywhite37"],
   "dependencies": {
     "utest": "",
