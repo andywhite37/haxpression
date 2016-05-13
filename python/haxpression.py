@@ -1901,7 +1901,7 @@ class haxpression_ExpressionGroup:
     __slots__ = ("variableMap",)
     _hx_fields = ["variableMap"]
     _hx_methods = ["clone", "hasVariable", "getVariables", "getExternalVariables", "getExpressionOrValue", "getExpression", "getValue", "setVariable", "setVariables", "setVariableValues", "removeVariable", "substitute", "simplify", "canExpand", "expand", "canExpandExpressionForVariable", "expandExpressionForVariable", "canEvaluate", "evaluate", "evaluateExpressionForVariable", "toValueMap", "toObject", "toString", "all", "any", "map", "reduce", "getVariableDependencyGraph", "getDependencySortedVariables", "getEvaluationInfo"]
-    _hx_statics = ["fromFallbackMap"]
+    _hx_statics = ["fromFallbackMap", "accExternalVariables", "accVariableDependencyGraph"]
 
     def __init__(self,variableMap = None):
         self.variableMap = (variableMap if ((variableMap is not None)) else haxe_ds_StringMap())
@@ -1942,21 +1942,11 @@ class haxpression_ExpressionGroup:
         _gthis = self
         if (forVariables is None):
             forVariables = self.getVariables(True)
-        accExternalVariables = None
-        def _hx_local_1(acc,variable):
-            if (not _gthis.hasVariable(variable)):
-                if (not haxpression_utils_Arrays.contains(acc,variable)):
-                    acc.append(variable)
-                return acc
-            expressionVariables = haxpression__Expression_Expression_Impl_.getVariables(_gthis.getExpression(variable))
-            _g = 0
-            while (_g < len(expressionVariables)):
-                expressionVariable = (expressionVariables[_g] if _g >= 0 and _g < len(expressionVariables) else None)
-                _g = (_g + 1)
-                acc = accExternalVariables(acc,expressionVariable)
-            return acc
-        accExternalVariables = _hx_local_1
-        return haxpression_utils_Arrays.reduce(forVariables,accExternalVariables,[])
+        def _hx_local_1():
+            def _hx_local_0(externalVariables,variable):
+                return haxpression_ExpressionGroup.accExternalVariables(_gthis,variable,externalVariables)
+            return haxpression_utils_Arrays.reduce(forVariables,_hx_local_0,[])
+        return _hx_local_1()
 
     def getExpressionOrValue(self,variable):
         if (not self.hasVariable(variable)):
@@ -2147,26 +2137,12 @@ class haxpression_ExpressionGroup:
         _gthis = self
         if (forVariables is None):
             forVariables = self.getVariables()
-        accVariableDependencyGraph = None
-        def _hx_local_1(graph,variable):
-            if (not _gthis.hasVariable(variable)):
-                return graph
-            expressionVariables = haxpression__Expression_Expression_Impl_.getVariables(_gthis.getExpression(variable))
-            if (len(expressionVariables) > 0):
-                graph.addEdgesTo(graphx__NodeOrValue_NodeOrValue_Impl_.fromValue(variable),graphx__NodeOrValue_NodeOrValue_Impl_.mapValues(expressionVariables))
-                _g = 0
-                while (_g < len(expressionVariables)):
-                    expressionVariable = (expressionVariables[_g] if _g >= 0 and _g < len(expressionVariables) else None)
-                    _g = (_g + 1)
-                    graph = accVariableDependencyGraph(graph,expressionVariable)
-            return graph
-        accVariableDependencyGraph = _hx_local_1
-        accVariableDependencyGraph1 = accVariableDependencyGraph
-        def _hx_local_3():
-            def _hx_local_2(graph1,variable1):
-                return accVariableDependencyGraph1(graph1,variable1)
-            return haxpression_utils_Arrays.reduce(forVariables,_hx_local_2,graphx_StringGraph())
-        return _hx_local_3()
+        seen = haxe_ds_StringMap()
+        def _hx_local_1():
+            def _hx_local_0(graph,variable):
+                return haxpression_ExpressionGroup.accVariableDependencyGraph(_gthis,variable,graph,seen)
+            return haxpression_utils_Arrays.reduce(forVariables,_hx_local_0,graphx_StringGraph())
+        return _hx_local_1()
 
     def getDependencySortedVariables(self,forVariables = None):
         return self.getVariableDependencyGraph(forVariables).topologicalSort()
@@ -2201,6 +2177,37 @@ class haxpression_ExpressionGroup:
                 return haxpression__ExpressionOrValue_ExpressionOrValue_Impl_.fromString((("COALESCE(" + HxOverrides.stringOrNull(",".join([python_Boot.toString1(x1,'') for x1 in _this]))) + ")"))
             return haxpression_ExpressionGroup(haxpression_utils_Maps.mapValues(_hx_map,_hx_local_1,haxe_ds_StringMap()))
         return _hx_local_2()
+
+    @staticmethod
+    def accExternalVariables(group,variable,externalVariables):
+        if (not group.hasVariable(variable)):
+            if (not haxpression_utils_Arrays.contains(externalVariables,variable)):
+                externalVariables.append(variable)
+            return externalVariables
+        expressionVariables = haxpression__Expression_Expression_Impl_.getVariables(group.getExpression(variable))
+        _g = 0
+        while (_g < len(expressionVariables)):
+            expressionVariable = (expressionVariables[_g] if _g >= 0 and _g < len(expressionVariables) else None)
+            _g = (_g + 1)
+            externalVariables = haxpression_ExpressionGroup.accExternalVariables(group,expressionVariable,externalVariables)
+        return externalVariables
+
+    @staticmethod
+    def accVariableDependencyGraph(group,variable,graph,seen):
+        if (variable in seen.h):
+            return graph
+        if (not group.hasVariable(variable)):
+            return graph
+        seen.h[variable] = True
+        expressionVariables = haxpression__Expression_Expression_Impl_.getVariables(group.getExpression(variable))
+        if (len(expressionVariables) > 0):
+            graph.addEdgesTo(graphx__NodeOrValue_NodeOrValue_Impl_.fromValue(variable),graphx__NodeOrValue_NodeOrValue_Impl_.mapValues(expressionVariables))
+            _g = 0
+            while (_g < len(expressionVariables)):
+                expressionVariable = (expressionVariables[_g] if _g >= 0 and _g < len(expressionVariables) else None)
+                _g = (_g + 1)
+                graph = haxpression_ExpressionGroup.accVariableDependencyGraph(group,expressionVariable,graph,seen)
+        return graph
 
 haxpression_ExpressionGroup._hx_class = haxpression_ExpressionGroup
 
