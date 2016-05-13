@@ -7,9 +7,15 @@ if [[ -f haxpression.zip ]]; then
 fi
 
 ./build
+
+test -z "$(git status --porcelain)" || (echo "Repo needs to be in a clean state to submit" && exit 1)
+
+version=$(cat haxelib.json | jq --monochrome-output .version | sed 's/"//g')
+echo "version: $version"
+
 #git add -A
 #git commit -m 'Submit to haxelib'
 
-zip -r haxpression.zip LICENSE README.md build.hxml haxelib.json hmm.json src test
+#zip -r haxpression.zip LICENSE README.md build.hxml haxelib.json hmm.json src test
 
-haxelib submit haxpression.zip
+#haxelib submit haxpression.zip
