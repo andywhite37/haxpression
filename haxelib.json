@@ -6,7 +6,7 @@
   "description": "Basic math expression parser and evaluator",
   "version": "2.0.2",
   "classPath": "src/",
-  "releasenote": "Small performance fixes for ExpressionGroup graph operations",
+  "releasenote": "Remove dependency on utest for production use",
   "contributors": ["andywhite37"],
   "dependencies": {
     "graphx": ""
