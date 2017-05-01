@@ -5,8 +5,8 @@ IFS=$'\n\t'
 echo "------ JavaScript ------"
 haxe build_js.hxml
 
-echo "------ Python ------"
-haxe build_python.hxml
+#echo "------ Python ------"
+#haxe build_python.hxml
 
 # TODO: fix haxe/java compiler issue in graphx
 #echo "------ Java ------"
