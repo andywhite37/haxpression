@@ -4,6 +4,9 @@
 # haxelib
 .haxelib/
 
+# IDEs
+.vscode/
+
 # project files
 bin/
 python/__pycache__
