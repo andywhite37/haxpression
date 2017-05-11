@@ -87,14 +87,15 @@ class Parser {
 
   function gobbleBinaryOperator() : Null<String> {
     gobbleSpaces();
-    var toCheck = inputString.substr(index, BinaryOperations.getMaxOperatorLength());
-    var toCheckLength = toCheck.length;
+    var toCheck : String = inputString.substr(index, BinaryOperations.getMaxOperatorLength());
+    var toCheckLength : Int = toCheck.length;
     while (toCheckLength > 0) {
       if (BinaryOperations.hasOperator(toCheck)) {
         index += toCheckLength;
         return toCheck;
       }
-      toCheck = toCheck.substr(0, --toCheckLength);
+      toCheckLength = toCheckLength - 1;
+      toCheck = toCheck.substr(0, toCheckLength);
     }
     return null; // not an operator
   }
@@ -180,14 +181,15 @@ class Parser {
       return gobbleArray();
     } else {
       // Try to gobble unary operator expression
-      var toCheck = inputString.substr(index, UnaryOperations.getMaxOperatorLength());
-      var toCheckLength = toCheck.length;
+      var toCheck : String = inputString.substr(index, UnaryOperations.getMaxOperatorLength());
+      var toCheckLength : Int = toCheck.length;
       while (toCheckLength > 0) {
         if (UnaryOperations.hasOperator(toCheck)) {
           index += toCheckLength;
           return EUnary(toCheck, gobbleToken());
         }
-        toCheck = toCheck.substr(0, --toCheckLength);
+        toCheckLength = toCheckLength - 1;
+        toCheck = toCheck.substr(0, toCheckLength);
       }
 
       // No expression found

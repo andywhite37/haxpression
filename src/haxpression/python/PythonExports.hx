@@ -1,7 +1,11 @@
 package haxpression.python;
 
+import haxe.Timer.measure;
+
 import python.Dict;
+
 using Lambda;
+
 using haxpression.utils.Maps;
 
 typedef PythonEvaluationInfo = {
@@ -14,35 +18,48 @@ class PythonExports {
 #if python
   @:keep
   public static function getEvaluationInfo(mappings : Dict<String, Array<String>>, requestedFieldIds: Array<String>) : Dict<String, Dynamic> {
-    // TODO: replace all the anon mapping crap with proper haxe python.Dict usage
+    var mappingsObj : {} = traceMeasure('convert mappings to python dict', function() {
+      return python.Lib.dictToAnon(mappings);
+    });
 
-    var obj = python.Lib.dictToAnon(mappings);
+    var fieldIdToExpressionsMap : Map<String, Array<ExpressionOrValue>> = new Map();
 
-    var map : Map<String, Array<ExpressionOrValue>> = new Map();
-    for (field in Reflect.fields(obj)) {
-      var arr : Array<String> = Reflect.field(obj, field);
-      //trace(field, arr);
-      map.set(field, arr.map(ExpressionOrValue.fromString));
-    }
-    var expressionGroup = ExpressionGroup.fromFallbackMap(map);
-    var info = expressionGroup.getEvaluationInfo(requestedFieldIds);
+    traceMeasure('parse all expressions', function() {
+      for (fieldId in Reflect.fields(mappingsObj)) {
+        var fieldExpressions : Array<String> = Reflect.field(mappingsObj, fieldId);
+        //trace(field, arr);
+        fieldIdToExpressionsMap.set(fieldId, fieldExpressions.map(ExpressionOrValue.fromString));
+      }
+    });
+
+    var expressionGroup = traceMeasure('create expression group (variable graph)', function() {
+      return ExpressionGroup.fromFallbackMap(fieldIdToExpressionsMap);
+    });
+
+    var evaluationInfo = traceMeasure('process expression group (get external variables, topological sort)', function() {
+      return expressionGroup.getEvaluationInfo(requestedFieldIds);
+    });
 
     var expressionAstsObj = {};
-    for (key in info.expressions.keys()) {
-      Reflect.setField(expressionAstsObj, key, expressionToDict(info.expressions.get(key)));
-    }
-
+    traceMeasure('convert expression ASTs to python dict', function() {
+      for (key in evaluationInfo.expressions.keys()) {
+        Reflect.setField(expressionAstsObj, key, expressionToDict(evaluationInfo.expressions.get(key)));
+      }
+    });
     //trace(haxe.Json.stringify(anonExpressionAsts));
 
     var result = {
       expressionAsts: python.Lib.anonToDict(expressionAstsObj),
-      externalVariables: info.externalVariables,
-      sortedComputedVariables: info.sortedComputedVariables
+      externalVariables: evaluationInfo.externalVariables,
+      sortedComputedVariables: evaluationInfo.sortedComputedVariables
     };
 
+    var pythonResult = traceMeasure('convert final result to python dict', function() {
+      return python.Lib.anonToDict(result);
+    });
     //trace(haxe.Json.stringify(result, null, '  '));
 
-    return python.Lib.anonToDict(result);
+    return pythonResult;
   }
 
   @:keep
@@ -102,6 +119,11 @@ class PythonExports {
         items: items.map(function(item) return expressionToDict(Expression.fromExpressionType(item)))
       };
     });
+  }
+
+  static inline function traceMeasure<T>(message : String, f : Void -> T) : T {
+    trace('${Date.now()} - haxpression: ${message}');
+    return measure(f);
   }
 #end
 }
