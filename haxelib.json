@@ -4,9 +4,9 @@
   "license": "MIT",
   "tags": ["parser", "expression", "math"],
   "description": "Basic math expression parser and evaluator",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "classPath": "src/",
-  "releasenote": "Fix python build/tests (caused by prefix -- operator), add logging to python export class",
+  "releasenote": "Fix bug in ExpressionGroup where variables that don't reference other variables were not added to the graph",
   "contributors": ["andywhite37"],
   "dependencies": {
     "graphx": ""

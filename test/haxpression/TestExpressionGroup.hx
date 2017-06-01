@@ -1,6 +1,8 @@
 package haxpression;
 
 import utest.Assert;
+import haxpression.ExpressionType;
+import haxpression.ValueType;
 using haxpression.utils.StringValueMaps;
 using haxpression.utils.Arrays;
 using haxpression.utils.Iterators;
@@ -248,6 +250,64 @@ class TestExpressionGroup {
     Assert.same({ type: "Identifier", name: "iq_sales" }, info.expressions.get("fs_sales").toObject());
     Assert.same(["iq_ni", "iq_sales"], info.externalVariables);
     Assert.same(["fs_sales", "fs_ni", "asn_ni"], info.sortedComputedVariables);
+  }
+
+  public function testGetEvaluationInfo_Empty() : Void {
+    var group = new ExpressionGroup(new Map()); // empty
+    var info = group.getEvaluationInfo(["a", "b", "c"]);
+    Assert.same(0, info.expressions.keys().toArray().length);
+    Assert.same([], info.sortedComputedVariables);
+    Assert.same(["a", "b", "c"], info.externalVariables);
+  }
+
+  public function testGetEvaluationInfo_SingleLiteralNA() : Void {
+    var group = new ExpressionGroup([
+      'a' => 'NA',
+    ]);
+    var info = group.getEvaluationInfo(["a"]);
+    Assert.same(1, info.expressions.keys().toArray().length);
+    Assert.same(ELiteral(VNA), info.expressions["a"]);
+    Assert.same(["a"], info.sortedComputedVariables);
+    Assert.same([], info.externalVariables);
+  }
+
+  public function testGetEvaluationInfo_SingleLiteralFloat() : Void {
+    var group = new ExpressionGroup([
+      'a' => '1.2',
+    ]);
+    var info = group.getEvaluationInfo(["a"]);
+    Assert.same(1, info.expressions.keys().toArray().length);
+    Assert.same(ELiteral(VFloat(1.2)), info.expressions["a"]);
+    Assert.same(["a"], info.sortedComputedVariables);
+    Assert.same([], info.externalVariables);
+  }
+
+  public function testGetEvaluationInfo_Multiple() : Void {
+    var group = new ExpressionGroup([
+      'a' => '1.2',
+      'b' => '42',
+      'c' => '"hi"',
+      'd' => 'true',
+      'e' => 'false',
+      'f' => 'NA',
+      'g' => 'NM',
+      'h' => 'ext1',
+      'i' => 'h + 3'
+    ]);
+    var info = group.getEvaluationInfo(["a", "b", "c", "d", "e", "f", "g", "h", "i"]);
+    Assert.same(9, info.expressions.keys().toArray().length);
+    Assert.same(ELiteral(VFloat(1.2)), info.expressions["a"]);
+    Assert.same(ELiteral(VFloat(42)), info.expressions["b"]);
+    Assert.same(ELiteral(VString("hi")), info.expressions["c"]);
+    Assert.same(ELiteral(VBool(true)), info.expressions["d"]);
+    Assert.same(ELiteral(VBool(false)), info.expressions["e"]);
+    Assert.same(ELiteral(VNA), info.expressions["f"]);
+    Assert.same(ELiteral(VNM), info.expressions["g"]);
+    Assert.same(EIdentifier("ext1"), info.expressions["h"]);
+    Assert.same(EBinary("+", EIdentifier("h"), ELiteral(VFloat(3))), info.expressions["i"]);
+    trace(info.sortedComputedVariables);
+    Assert.same(["h", "i", "g", "f", "e", "d", "c", "b", "a"], info.sortedComputedVariables);
+    Assert.same(["ext1"], info.externalVariables);
   }
 
   function getProcessedFinancialExpressions() : Map<String, ExpressionOrValue> {

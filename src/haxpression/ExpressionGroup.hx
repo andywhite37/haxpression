@@ -266,6 +266,11 @@ class ExpressionGroup {
   }
 
   static function accVariableDependencyGraph(group : ExpressionGroup, variable : String, graph : Graph<String>, seen : Map<String, Bool>) : Graph<String> {
+    //trace('-------------------------------------------');
+    //trace('accVariableDependencyGraph');
+    //trace('variable: $variable');
+    //trace('graph before: $graph');
+    //trace('seen: $seen');
     if (seen.exists(variable)) {
       return graph;
     }
@@ -274,13 +279,18 @@ class ExpressionGroup {
     }
     seen.set(variable, true);
     var expression = group.getExpression(variable);
+    //trace('expression: $expression');
     var expressionVariables = expression.getVariables();
     if (expressionVariables.length > 0) {
       graph.addEdgesTo(variable, NodeOrValue.mapValues(expressionVariables));
       for (expressionVariable in expressionVariables) {
         graph = accVariableDependencyGraph(group, expressionVariable, graph, seen);
       }
+    } else {
+      // if the variable doesn't reference any variables, just add it as a node to the graph, with no edges
+      graph.addNode(variable);
     }
+    //trace('graph after: $graph');
     return graph;
   }
 
@@ -293,6 +303,9 @@ class ExpressionGroup {
 
     if (forVariables == null) forVariables = group.getVariables(false);
 
+    //trace('forVariables');
+    //trace(forVariables);
+
     var result : EvaluationInfo = {
       expressions: new Map(),
       externalVariables: [],
@@ -300,13 +313,20 @@ class ExpressionGroup {
     };
 
     result.sortedComputedVariables = group.getDependencySortedVariables(forVariables);
+    //trace('sortedComputedVariables before');
+    //trace(result.sortedComputedVariables);
+
     //group = group.expand();
     result.externalVariables = group.getExternalVariables(forVariables);
+    //trace('externalVariables');
+    //trace(result.externalVariables);
 
     // remove external variables from the sorted computed variables
     result.sortedComputedVariables = result.sortedComputedVariables.filter(function(variable) {
       return !result.externalVariables.contains(variable);
     });
+    //trace('sortedComputedVariables after');
+    //trace(result.sortedComputedVariables);
 
     //group = group.expand();
 
