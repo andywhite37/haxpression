@@ -297,14 +297,14 @@ class TestExpressionGroup {
     var info = group.getEvaluationInfo(["a", "b", "c", "d", "e", "f", "g", "h", "i"]);
     Assert.same(9, info.expressions.keys().toArray().length);
     Assert.same(ELiteral(VFloat(1.2)), info.expressions["a"]);
-    Assert.same(ELiteral(VFloat(42)), info.expressions["b"]);
+    Assert.same(ELiteral(VFloat(42.0)), info.expressions["b"]);
     Assert.same(ELiteral(VString("hi")), info.expressions["c"]);
     Assert.same(ELiteral(VBool(true)), info.expressions["d"]);
     Assert.same(ELiteral(VBool(false)), info.expressions["e"]);
     Assert.same(ELiteral(VNA), info.expressions["f"]);
     Assert.same(ELiteral(VNM), info.expressions["g"]);
     Assert.same(EIdentifier("ext1"), info.expressions["h"]);
-    Assert.same(EBinary("+", EIdentifier("h"), ELiteral(VFloat(3))), info.expressions["i"]);
+    Assert.same(EBinary("+", EIdentifier("h"), ELiteral(VFloat(3.0))), info.expressions["i"]);
     trace(info.sortedComputedVariables);
     Assert.same(["h", "i", "g", "f", "e", "d", "c", "b", "a"], info.sortedComputedVariables);
     Assert.same(["ext1"], info.externalVariables);

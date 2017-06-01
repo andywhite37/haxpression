@@ -2651,6 +2651,8 @@ class haxpression_ExpressionGroup:
                 expressionVariable = (expressionVariables[_g] if _g >= 0 and _g < len(expressionVariables) else None)
                 _g = (_g + 1)
                 graph = haxpression_ExpressionGroup.accVariableDependencyGraph(group,expressionVariable,graph,seen)
+        else:
+            graph.addNode(graphx__NodeOrValue_NodeOrValue_Impl_.fromValue(variable))
         return graph
 
 haxpression_ExpressionGroup._hx_class = haxpression_ExpressionGroup
