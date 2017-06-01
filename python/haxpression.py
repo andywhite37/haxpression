@@ -3340,50 +3340,88 @@ haxpression_UnaryOperations._hx_class = haxpression_UnaryOperations
 class haxpression_python_PythonExports:
     _hx_class_name = "haxpression.python.PythonExports"
     __slots__ = ()
-    _hx_statics = ["getEvaluationInfo", "parseToObject", "parseEvaluate", "expressionToDict", "traceMeasure"]
+    _hx_statics = ["loggingEnabled", "getEvaluationInfo", "parseToObject", "parseEvaluate", "expressionToDict", "traceMeasure"]
 
     @staticmethod
     def getEvaluationInfo(mappings,requestedFieldIds):
-        haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "convert mappings to python dict"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        def _hx_local_0():
-            return python_Lib.dictToAnon(mappings)
-        mappingsObj = haxe_Timer.measure(_hx_local_0,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+        mappingsObj = None
+        if haxpression_python_PythonExports.loggingEnabled:
+            haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "convert mappings to python dict"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+            def _hx_local_0():
+                return python_Lib.dictToAnon(mappings)
+            mappingsObj = haxe_Timer.measure(_hx_local_0,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+        else:
+            mappingsObj = python_Lib.dictToAnon(mappings)
+        mappingsObj1 = mappingsObj
         fieldIdToExpressionsMap = haxe_ds_StringMap()
-        haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "parse all expressions"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        def _hx_local_2():
-            _g = 0
-            _g1 = python_Boot.fields(mappingsObj)
-            while (_g < len(_g1)):
-                fieldId = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
-                _g = (_g + 1)
-                fieldExpressions = Reflect.field(mappingsObj,fieldId)
-                value = list(map(haxpression__ExpressionOrValue_ExpressionOrValue_Impl_.fromString,fieldExpressions))
-                fieldIdToExpressionsMap.h[fieldId] = value
-        haxe_Timer.measure(_hx_local_2,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "create expression group (variable graph)"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        def _hx_local_3():
-            return haxpression_ExpressionGroup.fromFallbackMap(fieldIdToExpressionsMap)
-        expressionGroup = haxe_Timer.measure(_hx_local_3,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "process expression group (get external variables, topological sort)"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        def _hx_local_4():
-            return expressionGroup.getEvaluationInfo(requestedFieldIds)
-        evaluationInfo = haxe_Timer.measure(_hx_local_4,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+        if haxpression_python_PythonExports.loggingEnabled:
+            haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "parse all expressions"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+            def _hx_local_2():
+                _g = 0
+                _g1 = python_Boot.fields(mappingsObj1)
+                while (_g < len(_g1)):
+                    fieldId = (_g1[_g] if _g >= 0 and _g < len(_g1) else None)
+                    _g = (_g + 1)
+                    fieldExpressions = Reflect.field(mappingsObj1,fieldId)
+                    value = list(map(haxpression__ExpressionOrValue_ExpressionOrValue_Impl_.fromString,fieldExpressions))
+                    fieldIdToExpressionsMap.h[fieldId] = value
+            haxe_Timer.measure(_hx_local_2,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+        else:
+            _g2 = 0
+            _g11 = python_Boot.fields(mappingsObj1)
+            while (_g2 < len(_g11)):
+                fieldId1 = (_g11[_g2] if _g2 >= 0 and _g2 < len(_g11) else None)
+                _g2 = (_g2 + 1)
+                fieldExpressions1 = Reflect.field(mappingsObj1,fieldId1)
+                value1 = list(map(haxpression__ExpressionOrValue_ExpressionOrValue_Impl_.fromString,fieldExpressions1))
+                fieldIdToExpressionsMap.h[fieldId1] = value1
+        expressionGroup = None
+        if haxpression_python_PythonExports.loggingEnabled:
+            haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "create expression group (variable graph)"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+            def _hx_local_4():
+                return haxpression_ExpressionGroup.fromFallbackMap(fieldIdToExpressionsMap)
+            expressionGroup = haxe_Timer.measure(_hx_local_4,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+        else:
+            expressionGroup = haxpression_ExpressionGroup.fromFallbackMap(fieldIdToExpressionsMap)
+        expressionGroup1 = expressionGroup
+        evaluationInfo = None
+        if haxpression_python_PythonExports.loggingEnabled:
+            haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "process expression group (get external variables, topological sort)"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+            def _hx_local_5():
+                return expressionGroup1.getEvaluationInfo(requestedFieldIds)
+            evaluationInfo = haxe_Timer.measure(_hx_local_5,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+        else:
+            evaluationInfo = expressionGroup1.getEvaluationInfo(requestedFieldIds)
+        evaluationInfo1 = evaluationInfo
         expressionAstsObj = _hx_AnonObject({})
-        haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "convert expression ASTs to python dict"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        def _hx_local_5():
-            key = evaluationInfo.expressions.keys()
-            while key.hasNext():
-                key1 = key.next()
-                value1 = haxpression_python_PythonExports.expressionToDict(evaluationInfo.expressions.h.get(key1,None))
-                tmp = (("_hx_" + key1) if ((key1 in python_Boot.keywords)) else (("_hx_" + key1) if (((((len(key1) > 2) and ((ord(key1[0]) == 95))) and ((ord(key1[1]) == 95))) and ((ord(key1[(len(key1) - 1)]) != 95)))) else key1))
-                setattr(expressionAstsObj,tmp,value1)
-        haxe_Timer.measure(_hx_local_5,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        result = _hx_AnonObject({'expressionAsts': python_Lib.anonToDict(expressionAstsObj), 'externalVariables': evaluationInfo.externalVariables, 'sortedComputedVariables': evaluationInfo.sortedComputedVariables})
-        haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "convert final result to python dict"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        def _hx_local_6():
-            return python_Lib.anonToDict(result)
-        pythonResult = haxe_Timer.measure(_hx_local_6,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        return pythonResult
+        if haxpression_python_PythonExports.loggingEnabled:
+            haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "convert expression ASTs to python dict"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+            def _hx_local_6():
+                key = evaluationInfo1.expressions.keys()
+                while key.hasNext():
+                    key1 = key.next()
+                    value2 = haxpression_python_PythonExports.expressionToDict(evaluationInfo1.expressions.h.get(key1,None))
+                    tmp = (("_hx_" + key1) if ((key1 in python_Boot.keywords)) else (("_hx_" + key1) if (((((len(key1) > 2) and ((ord(key1[0]) == 95))) and ((ord(key1[1]) == 95))) and ((ord(key1[(len(key1) - 1)]) != 95)))) else key1))
+                    setattr(expressionAstsObj,tmp,value2)
+            haxe_Timer.measure(_hx_local_6,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+        else:
+            key2 = evaluationInfo1.expressions.keys()
+            while key2.hasNext():
+                key3 = key2.next()
+                value3 = haxpression_python_PythonExports.expressionToDict(evaluationInfo1.expressions.h.get(key3,None))
+                tmp1 = (("_hx_" + key3) if ((key3 in python_Boot.keywords)) else (("_hx_" + key3) if (((((len(key3) > 2) and ((ord(key3[0]) == 95))) and ((ord(key3[1]) == 95))) and ((ord(key3[(len(key3) - 1)]) != 95)))) else key3))
+                setattr(expressionAstsObj,tmp1,value3)
+        result = _hx_AnonObject({'expressionAsts': python_Lib.anonToDict(expressionAstsObj), 'externalVariables': evaluationInfo1.externalVariables, 'sortedComputedVariables': evaluationInfo1.sortedComputedVariables})
+        pythonResult = None
+        if haxpression_python_PythonExports.loggingEnabled:
+            haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + "convert final result to python dict"),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+            def _hx_local_7():
+                return python_Lib.anonToDict(result)
+            pythonResult = haxe_Timer.measure(_hx_local_7,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+        else:
+            pythonResult = python_Lib.anonToDict(result)
+        pythonResult1 = pythonResult
+        return pythonResult1
 
     @staticmethod
     def parseToObject(s):
@@ -3450,8 +3488,11 @@ class haxpression_python_PythonExports:
 
     @staticmethod
     def traceMeasure(message,f):
-        haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + ("null" if message is None else message)),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
-        return haxe_Timer.measure(f,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+        if haxpression_python_PythonExports.loggingEnabled:
+            haxe_Log.trace(((("" + Std.string(Date.now())) + " - haxpression: ") + ("null" if message is None else message)),_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 125, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+            return haxe_Timer.measure(f,_hx_AnonObject({'fileName': "PythonExports.hx", 'lineNumber': 126, 'className': "haxpression.python.PythonExports", 'methodName': "traceMeasure"}))
+        else:
+            return f()
 haxpression_python_PythonExports._hx_class = haxpression_python_PythonExports
 
 
@@ -4567,6 +4608,7 @@ haxpression__Value_Value_Impl_.TRUE_STRING = "true"
 haxpression__Value_Value_Impl_.FALSE_STRING = "false"
 haxpression_Config.useCloneForExpressions = False
 haxpression_Config.useCloneForExpressionGroups = False
+haxpression_python_PythonExports.loggingEnabled = False
 haxpression_utils_Chars.PERIOD = "."
 haxpression_utils_Chars.COMMA = ","
 haxpression_utils_Chars.SINGLE_QUOTE = "'"

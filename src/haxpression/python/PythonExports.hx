@@ -4,10 +4,6 @@ import haxe.Timer.measure;
 
 import python.Dict;
 
-using Lambda;
-
-using haxpression.utils.Maps;
-
 typedef PythonEvaluationInfo = {
   expressionAsts: Dict<String, Dynamic>,
   externalVariables: Array<String>,
@@ -16,6 +12,9 @@ typedef PythonEvaluationInfo = {
 
 class PythonExports {
 #if python
+  @:keep
+  public static var loggingEnabled(default, default) = false;
+
   @:keep
   public static function getEvaluationInfo(mappings : Dict<String, Array<String>>, requestedFieldIds: Array<String>) : Dict<String, Dynamic> {
     var mappingsObj : {} = traceMeasure('convert mappings to python dict', function() {
@@ -122,8 +121,12 @@ class PythonExports {
   }
 
   static inline function traceMeasure<T>(message : String, f : Void -> T) : T {
-    trace('${Date.now()} - haxpression: ${message}');
-    return measure(f);
+    if (loggingEnabled) {
+      trace('${Date.now()} - haxpression: ${message}');
+      return measure(f);
+    } else {
+      return f();
+    }
   }
 #end
 }

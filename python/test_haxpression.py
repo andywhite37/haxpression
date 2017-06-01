@@ -3,6 +3,8 @@
 from haxpression import haxpression_python_PythonExports as Expr
 import json
 
+Expr.loggingEnabled = False
+
 mappings = {
     "ratios_ebitda_margin": ["asn_ebitda / asn_sales"],
     "ratios_ni_margin": ["asn_ni / asn_sales"],
