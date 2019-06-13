@@ -49,8 +49,8 @@ abstract Expression(ExpressionType) {
     return switch this {
       case ELiteral(value) : new Value(value).toString();
       case EIdentifier(name) : name;
-      case EUnary(operator, operand): '${operator}${getString(operand)}';
-      case EBinary(operator, left, right) : '(${getString(left)} $operator ${getString(right)})';
+      case EUnary(operant, operand): '${operant}${getString(operand)}';
+      case EBinary(operant, left, right) : '(${getString(left)} $operant ${getString(right)})';
       case ECall(callee, arguments): '${callee}(${getStringDelimited(arguments, ",")})';
       case EConditional(test, consequent, alternate) : '(${getString(test)} ? ${getString(consequent)} : ${getString(alternate)})';
       case EArray(items): '[${getStringDelimited(items, ",")}]';
@@ -75,14 +75,14 @@ abstract Expression(ExpressionType) {
         type: "Identifier",
         name: name
       };
-      case EUnary(operator, operand) : {
+      case EUnary(operant, operand) : {
         type: "Unary",
-        operator: operator,
+        operant: operant,
         operand: (operand : Expression).toObject()
       };
-      case EBinary(operator, left, right) : {
+      case EBinary(operant, left, right) : {
         type: "Binary",
-        operator: operator,
+        operant: operant,
         left: (left : Expression).toObject(),
         right: (right : Expression).toObject()
       };
@@ -163,10 +163,10 @@ abstract Expression(ExpressionType) {
         ELiteral(value);
       case EIdentifier(name) :
         EIdentifier(name);
-      case EUnary(operator, operand) :
-        EUnary(operator, (operand : Expression).clone());
-      case EBinary(operator, left, right) :
-        EBinary(operator, (left : Expression).clone(), (right : Expression).clone());
+      case EUnary(operant, operand) :
+        EUnary(operant, (operand : Expression).clone());
+      case EBinary(operant, left, right) :
+        EBinary(operant, (left : Expression).clone(), (right : Expression).clone());
       case ECall(callee, arguments) :
         ECall(callee, arguments.clone());
       case EConditional(test, consequent, alternate) :
@@ -184,10 +184,10 @@ abstract Expression(ExpressionType) {
         ELiteral(value);
       case EIdentifier(name):
         variables.exists(name) ? variables.get(name).toExpression() : EIdentifier(name);
-      case EUnary(operator, expression):
-        EUnary(operator, (expression : Expression).substitute(variables));
-      case EBinary(operator, left, right):
-        EBinary(operator, (left : Expression).substitute(variables), (right : Expression).substitute(variables));
+      case EUnary(operant, expression):
+        EUnary(operant, (expression : Expression).substitute(variables));
+      case EBinary(operant, left, right):
+        EBinary(operant, (left : Expression).substitute(variables), (right : Expression).substitute(variables));
       case ECall(callee, arguments):
         ECall(callee, arguments.substitute(variables));
       case EConditional(test, consequent, alternate):
@@ -205,17 +205,17 @@ abstract Expression(ExpressionType) {
         ELiteral(value);
       case EIdentifier(name):
         EIdentifier(name);
-      case EUnary(operator, operand):
+      case EUnary(operant, operand):
         if ((operand : Expression).canEvaluate()) {
-          ELiteral(UnaryOperations.evaluate(operator, (operand : Expression).evaluate()));
+          ELiteral(UnaryOperations.evaluate(operant, (operand : Expression).evaluate()));
         } else {
-          EUnary(operator, (operand : Expression).simplify().toExpressionType());
+          EUnary(operant, (operand : Expression).simplify().toExpressionType());
         }
-      case EBinary(operator, left, right):
+      case EBinary(operant, left, right):
         if ((left : Expression).canEvaluate() && (right : Expression).canEvaluate()) {
-          ELiteral(BinaryOperations.evaluate(operator, (left : Expression).evaluate(), (right : Expression).evaluate()));
+          ELiteral(BinaryOperations.evaluate(operant, (left : Expression).evaluate(), (right : Expression).evaluate()));
         } else {
-          EBinary(operator, (left : Expression).simplify(), (right : Expression).simplify());
+          EBinary(operant, (left : Expression).simplify(), (right : Expression).simplify());
         }
       case EConditional(test, consequent, alternate):
         if ((test : Expression).canEvaluate()) {
@@ -244,9 +244,9 @@ abstract Expression(ExpressionType) {
         true;
       case EIdentifier(name):
         false;
-      case EUnary(operator, operand):
+      case EUnary(operant, operand):
         (operand : Expression).canEvaluate();
-      case EBinary(operator, left, right):
+      case EBinary(operant, left, right):
         (left : Expression).canEvaluate() && (right : Expression).canEvaluate();
       case ECall(callee, arguments):
         CallOperations.canEvaluate(callee, arguments);
@@ -276,13 +276,13 @@ abstract Expression(ExpressionType) {
           throw new Error('cannot evaluate expression with unset variable: $name');
         }
         variables.get(name);
-      case EUnary(operator, operand):
+      case EUnary(operant, operand):
         var operandValue = (operand : Expression).evaluate(variables);
-        UnaryOperations.evaluate(operator, operandValue);
-      case EBinary(operator, left, right):
+        UnaryOperations.evaluate(operant, operandValue);
+      case EBinary(operant, left, right):
         var leftValue = (left : Expression).evaluate(variables);
         var rightValue = (right : Expression).evaluate(variables);
-        BinaryOperations.evaluate(operator, leftValue, rightValue);
+        BinaryOperations.evaluate(operant, leftValue, rightValue);
       case ECall(callee, arguments):
         CallOperations.evaluate(callee, arguments.evaluate(variables));
       case EConditional(test, consequent, alternate):
@@ -352,9 +352,9 @@ abstract Expression(ExpressionType) {
       case EIdentifier(name) :
         // Push a variable if we haven't seen it already
         if (variables.indexOf(name) == -1) variables.push(name);
-      case EUnary(operator, operand):
+      case EUnary(operant, operand):
         (operand : Expression).accumulateVariables(variables);
-      case EBinary(operator, left, right):
+      case EBinary(operant, left, right):
         (left : Expression).accumulateVariables(variables);
         (right : Expression).accumulateVariables(variables);
       case ECall(callee, arguments):

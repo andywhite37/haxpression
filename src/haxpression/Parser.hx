@@ -99,6 +99,7 @@ class Parser {
     }
     return null; // not an operator
   }
+  
 
   function gobbleBinaryExpression() : Expression {
     var char : String;
@@ -106,7 +107,7 @@ class Parser {
     var binaryOperator : String;
     var precedence : Int;
     var stack : Array<Dynamic>;
-    var binaryOperatorInfo : { operator : String, precedence : Int };
+    var binaryOperatorInfo : { operant : String, precedence : Int };
     var left : Expression;
     var right : Expression;
     var left = gobbleToken();
@@ -115,7 +116,7 @@ class Parser {
       return left;
     }
     binaryOperatorInfo = {
-      operator: binaryOperator,
+      operant: binaryOperator,
       precedence: BinaryOperations.getOperatorPrecedence(binaryOperator)
     };
     var right = gobbleToken();
@@ -135,13 +136,13 @@ class Parser {
       }
 
       binaryOperatorInfo = {
-        operator: binaryOperator,
+        operant: binaryOperator,
         precedence: precedence
       };
 
       while ((stack.length > 2) && (precedence <= stack[stack.length - 2].precedence)) {
         right = stack.pop();
-        binaryOperator = stack.pop().operator;
+        binaryOperator = stack.pop().operant;
         left = stack.pop();
         var expression = EBinary(binaryOperator, left, right);
         stack.push(expression);
@@ -158,7 +159,7 @@ class Parser {
     var i = stack.length - 1;
     expression = stack[i];
     while (i > 1) {
-      expression = EBinary(stack[i - 1].operator, stack[i - 2], expression);
+      expression = EBinary(stack[i - 1].operant, stack[i - 2], expression);
       i -= 2;
     }
 
