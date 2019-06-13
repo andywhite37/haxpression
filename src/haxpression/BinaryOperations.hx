@@ -33,31 +33,31 @@ class BinaryOperations {
     addOperator("**", 11, function(left, right) return Math.pow(left.toFloat(), right.toFloat()));
   }
 
-  public static function evaluate(operator, left : Value, right : Value) : Value {
-    return map.get(operator).operation(left, right);
+  public static function evaluate(operant, left : Value, right : Value) : Value {
+    return map.get(operant).operation(left, right);
   }
 
-  public static function addOperator(operator : String, precedence : Int, operation : Value -> Value -> Value) {
-    map.set(operator, {
+  public static function addOperator(operant : String, precedence : Int, operation : Value -> Value -> Value) {
+    map.set(operant, {
       precedence: precedence,
       operation: wrapOperation(operation)
     });
   }
 
-  public static function removeOperator(operator : String) {
-    map.remove(operator);
+  public static function removeOperator(operant : String) {
+    map.remove(operant);
   }
 
-  public static function hasOperator(operator : String) : Bool {
-    return map.exists(operator);
+  public static function hasOperator(operant : String) : Bool {
+    return map.exists(operant);
   }
 
   public static function clearOperators() {
     map = new Map();
   }
 
-  public static function getOperatorPrecedence(operator : String) : Int {
-    return map.get(operator).precedence;
+  public static function getOperatorPrecedence(operant : String) : Int {
+    return map.get(operant).precedence;
   }
 
   public static function getMaxOperatorLength() : Int {

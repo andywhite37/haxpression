@@ -16,22 +16,22 @@ class UnaryOperations {
     addOperator("~", function(value) return ~(value.toInt()));
   }
 
-  public static function evaluate(operator : String, value : Value) : Value {
-    return map.get(operator).operation(value);
+  public static function evaluate(operant : String, value : Value) : Value {
+    return map.get(operant).operation(value);
   }
 
-  public static function addOperator(operator : String, operation : Value -> Value) {
-    map.set(operator, {
+  public static function addOperator(operant : String, operation : Value -> Value) {
+    map.set(operant, {
       operation: wrapOperation(operation)
     });
   }
 
-  public static function removeOperator(operator : String) {
-    map.remove(operator);
+  public static function removeOperator(operant : String) {
+    map.remove(operant);
   }
 
-  public static function hasOperator(operator : String) : Bool {
-    return map.exists(operator);
+  public static function hasOperator(operant : String) : Bool {
+    return map.exists(operant);
   }
 
   public static function clearOperators() {
